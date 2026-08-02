@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="id" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>JINARA — Digital Wariga Bali Platform</title>
+
+<!-- PWA Manifest & Meta Tags -->
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#08080A">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="JINARA">
+
+<!-- Fonts: Montserrat -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,400&display=swap" rel="stylesheet">
+
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    darkMode: 'class',
+    theme: {
+      extend: {
+        colors: {
+          jinara: {
+            bg: '#08080A',
+            card: '#121216',
+            elevated: '#1A1A22',
+            border: '#262632',
+            gold: '#C5A059',
+            'gold-light': '#E8CB8B',
+            'gold-dark': '#9A7832',
+            'gold-glow': 'rgba(197, 160, 89, 0.25)',
+            text: '#EDEDF0',
+            muted: '#8A8A93'
+          }
+        },
+        fontFamily: {
+          sans: ['Montserrat', 'sans-serif']
+        }
+      }
+    }
+  }
+</script>
+
+<style>
+:root {
+  --bg-black: #08080A;
+  --gold-primary: #C5A059;
+  --gold-light: #E8CB8B;
+  --gold-dark: #9A7832;
+  --gold-glow: rgba(197, 160, 89, 0.22);
+}
+
+* {
+  margin: 0; padding: 0;
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+  font-family: 'Montserrat', sans-serif;
+}
+
+body {
+  background-color: var(--bg-black);
+  color: #EDEDF0;
+  min-height: 100vh;
+  overflow-x: hidden;
+  user-select: none;
+}
+
+/* Glassmorphism Styles */
+.glass-card {
+  background: linear-gradient(145deg, rgba(22, 22, 28, 0.95) 0%, rgba(12, 12, 16, 0.98) 100%);
+  border: 1px solid rgba(197, 160, 89, 0.15);
+  box-shadow: 0 12px 36px -10px rgba(0, 0, 0, 0.7);
+  transition: all 0.3s ease;
+}
+
+/* Login Screen */
+.login-screen {
+  min-height: 100vh;
+  background: #0A0A0C;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+
+.brand-title {
+  font-weight: 900;
+  font-size: clamp(68px, 18vw, 108px);
+  line-height: 0.82;
+  letter-spacing: -2px;
+  color: #FFFFFF;
+  text-align: center;
+  margin-bottom: 60px;
+}
+
+.minimal-input {
+  width: 100%;
+  max-width: 320px;
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid #33333F;
+  padding: 12px 16px;
+  font-size: 13px;
+  letter-spacing: 3px;
+  color: #FFFFFF;
+  text-align: center;
+  outline: none;
+  margin-bottom: 35px;
+}
+.minimal-input:focus { border-bottom-color: var(--gold-primary); }
+
+.gold-outline-btn {
+  width: 100%;
+  max-width: 320px;
+  padding: 16px;
+  background: transparent;
+  border: 1px solid #A88647;
+  color: #C5A059;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  cursor: pointer;
+  border-radius: 2px;
+}
+
+.modal-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.85);
+  backdrop-filter: blur(12px);
+  z-index: 1000;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+.modal-overlay.active { display: flex; }
+</style>
+</head>
+<body class="bg-[#08080A] text-zinc-100 min-h-screen">
+
+<!-- LOGIN SCREEN -->
+<div class="login-screen" id="loginPage">
+  <div class="brand-title">JI<br>NA<br>RA</div>
+
+  <input type="password" class="minimal-input" id="passwordInput" placeholder="KATA SANDI" autocomplete="off" onkeypress="if(event.key==='Enter') login()">
+  
+  <button class="gold-outline-btn" onclick="login()">MASUK</button>
+
+  <p id="errorMsg" class="text-xs text-red-400 font-medium tracking-widest mt-4 uppercase opacity-0 transition-opacity duration-300">
+    Kata sandi tidak valid. Coba lagi.
+  </p>
+
+  <div class="text-[11px] tracking-[2.5px] text-zinc-500 uppercase mt-12 cursor-pointer hover:text-jinara-gold transition" onclick="openModal('forgotModal')">
+    LUPA SANDI?
+  </div>
+</div>
+
+<!-- LUPA SANDI MODAL -->
+<div class="modal-overlay" id="forgotModal">
+  <div class="glass-card max-w-sm w-full p-6 rounded-2xl text-center border border-jinara-gold/30">
+    <h3 class="text-base font-bold text-white mb-2 tracking-wide uppercase">Akses Platform JINARA</h3>
+    <p class="text-xs text-zinc-400 leading-relaxed mb-6">
+      Kata sandi default platform adalah <span class="text-jinara-gold font-bold">JINARAS</span>.
+    </p>
+    <button onclick="closeModal('forgotModal')" class="w-full py-3 bg-jinara-gold text-jinara-bg text-xs font-bold tracking-widest uppercase rounded-lg">
+      MENGERTI
+    </button>
+  </div>
+</div>
+
+<!-- MAIN APP CONTAINER -->
+<div id="appContainer" class="hidden min-h-screen pb-16 bg-[#08080A]">
+
+  <!-- Header Navigation -->
+  <header class="border-b border-zinc-800/80 bg-zinc-950/90 sticky top-0 z-50 backdrop-blur-md">
+    <div class="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
+      
+      <!-- Brand Logo Header -->
+      <div class="flex items-center space-x-3 cursor-pointer" onclick="navigateTo('kalender')">
+        <div class="w-9 h-9 rounded-lg border border-jinara-gold/40 flex flex-col items-center justify-center bg-jinara-gold/10 text-jinara-gold font-black text-[7px] tracking-wider leading-[0.95] text-center select-none">
+          <span>JI</span><span>NA</span><span>RA</span>
+        </div>
+        <div>
+          <h1 class="font-black text-sm tracking-[0.2em] text-white uppercase">JINARA</h1>
+          <p class="text-[9px] text-jinara-gold font-bold tracking-widest uppercase">Digital Wariga Bali</p>
+        </div>
+      </div>
+
+      <button onclick="logout()" class="px-3.5 py-1.5 rounded-lg border border-zinc-800 text-zinc-400 text-xs font-semibold hover:text-red-400 transition">
+        KELUAR
+      </button>
+    </div>
+  </header>
+
+  <!-- 4 Utama Navigation Buttons -->
+  <nav class="max-w-6xl mx-auto px-4 mt-5">
+    <div class="grid grid-cols-2 lg:grid-cols-4 gap-2.5">
+      <button class="nav-btn active py-3.5 px-3 rounded-xl font-extrabold text-xs tracking-wider text-jinara-gold border border-jinara-gold/50 bg-jinara-gold/15" onclick="navigateTo('kalender')" data-page="kalender">
+        <span>📅</span> KALENDER BALI
+      </button>
+      <button class="nav-btn py-3.5 px-3 rounded-xl font-extrabold text-xs tracking-wider text-zinc-400 border border-zinc-800 bg-zinc-900/60" onclick="navigateTo('pewarigaan')" data-page="pewarigaan">
+        <span>🔮</span> PEWARIGAAN
+      </button>
+      <button class="nav-btn py-3.5 px-3 rounded-xl font-extrabold text-xs tracking-wider text-zinc-400 border border-zinc-800 bg-zinc-900/60 text-center" onclick="navigateTo('padewasan')" data-page="padewasan">
+        <span>☀️</span> PADEWASAN
+      </button>
+      <button class="nav-btn py-3.5 px-3 rounded-xl font-extrabold text-xs tracking-wider text-zinc-400 border border-zinc-800 bg-zinc-900/60 text-center" onclick="navigateTo('jodoh')" data-page="jodoh">
+        <span>💍</span> JODOH
+      </button>
+    </div>
+  </nav>
+
+  <main class="max-w-6xl mx-auto px-4 mt-6">
+    <!-- PAGE 1: KALENDER -->
+    <section class="page active" id="page-kalender">
+      <div class="glass-card rounded-2xl p-6 border border-zinc-800 mb-6">
+        <h2 class="text-xl font-extrabold text-white mb-2">Kalender Bali Bambang Gde Rawi</h2>
+        <p class="text-xs text-zinc-400 mb-4">Sistem perhitungan presisi wariga digital.</p>
+        <div class="grid grid-cols-7 gap-2 text-center text-xs font-bold text-zinc-400 mt-4" id="kalenderGrid">
+          <!-- Calendar Days Grid Rendered dynamically -->
+        </div>
+      </div>
+    </section>
+
+    <!-- PAGE 2: PEWARIGAAN -->
+    <section class="page hidden" id="page-pewarigaan">
+      <div class="glass-card rounded-2xl p-6 border border-zinc-800 text-center">
+        <h2 class="text-xl font-extrabold text-white mb-4">Hitung Pewarigaan Kelahiran</h2>
+        <div class="grid grid-cols-3 gap-2 max-w-sm mx-auto mb-4">
+          <select id="pTgl" class="bg-zinc-900 p-2.5 rounded-xl border border-zinc-700 text-xs text-white"></select>
+          <select id="pBln" class="bg-zinc-900 p-2.5 rounded-xl border border-zinc-700 text-xs text-white">
+            <option value="1">Januari</option><option value="2">Februari</option><option value="3">Maret</option>
+            <option value="4">April</option><option value="5">Mei</option><option value="6">Juni</option>
+            <option value="7">Juli</option><option value="8">Agustus</option><option value="9">September</option>
+            <option value="10">Oktober</option><option value="11">November</option><option value="12">Desember</option>
+          </select>
+          <select id="pThn" class="bg-zinc-900 p-2.5 rounded-xl border border-zinc-700 text-xs text-white"></select>
+        </div>
+        <button onclick="alert('Hasil kalkulasi siap dihitung.')" class="px-6 py-3 bg-jinara-gold text-zinc-950 font-bold text-xs rounded-xl uppercase tracking-wider">
+          Hitung Pewarigaan
+        </button>
+      </div>
+    </section>
+
+    <!-- PAGE 3: PADEWASAN -->
+    <section class="page hidden" id="page-padewasan">
+      <div class="glass-card rounded-2xl p-6 border border-zinc-800">
+        <h2 class="text-xl font-extrabold text-white mb-2">Pencarian Hari Baik (Padewasan)</h2>
+        <p class="text-xs text-zinc-400">Temukan hari baik untuk pernikahan, usaha, membangun rumah, dan upacara.</p>
+      </div>
+    </section>
+
+    <!-- PAGE 4: JODOH -->
+    <section class="page hidden" id="page-jodoh">
+      <div class="glass-card rounded-2xl p-6 border border-zinc-800 text-center">
+        <h2 class="text-xl font-extrabold text-white mb-2">Perhitungan Jodoh Tri Pramana</h2>
+        <p class="text-xs text-zinc-400">Analisis kecocokan pasangan berdasarkan sisa 16.</p>
+      </div>
+    </section>
+  </main>
+</div>
+
+<script>
+// PWA Service Worker Registration
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./sw.js').catch(err => console.log('SW Fail:', err));
+  });
+}
+
+function login() {
+  const pwd = document.getElementById('passwordInput').value.trim();
+  if(pwd === 'JINARAS' || pwd === 'jinaras') {
+    document.getElementById('loginPage').style.display = 'none';
+    document.getElementById('appContainer').classList.remove('hidden');
+  } else {
+    const err = document.getElementById('errorMsg');
+    err.classList.remove('opacity-0');
+    setTimeout(() => err.classList.add('opacity-0'), 3000);
+  }
+}
+
+function logout() {
+  document.getElementById('appContainer').classList.add('hidden');
+  document.getElementById('loginPage').style.display = 'flex';
+}
+
+function openModal(id) { document.getElementById(id).classList.add('active'); }
+function closeModal(id) { document.getElementById(id).classList.remove('active'); }
+
+function navigateTo(pageId) {
+  document.querySelectorAll('.page').forEach(p => p.classList.add('hidden'));
+  document.getElementById('page-' + pageId).classList.remove('hidden');
+
+  document.querySelectorAll('.nav-btn').forEach(btn => {
+    btn.classList.remove('text-jinara-gold', 'bg-jinara-gold/15', 'border-jinara-gold/50');
+    btn.classList.add('text-zinc-400', 'bg-zinc-900/60', 'border-zinc-800');
+  });
+
+  const activeBtn = document.querySelector(`[data-page="${pageId}"]`);
+  if(activeBtn) {
+    activeBtn.classList.remove('text-zinc-400', 'bg-zinc-900/60', 'border-zinc-800');
+    activeBtn.classList.add('text-jinara-gold', 'bg-jinara-gold/15', 'border-jinara-gold/50');
+  }
+}
+
+// Populate Date Selectors
+window.onload = function() {
+  const pTgl = document.getElementById('pTgl');
+  const pThn = document.getElementById('pThn');
+  if(pTgl) for(let i=1; i<=31; i++) pTgl.innerHTML += `<option value="${i}">${i}</option>`;
+  if(pThn) for(let y=2026; y>=1930; y--) pThn.innerHTML += `<option value="${y}">${y}</option>`;
+};
+</script>
+</body>
+</html>
