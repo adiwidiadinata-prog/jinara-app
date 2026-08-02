@@ -46,6 +46,15 @@
   }
 </script>
 
+<!--
+  Library kalender Bali open-source (Apache-2.0), sudah mengimplementasikan
+  Pengalantaka Eka Sungsang Pon (sebelum 2000) & Paing (2000-sekarang) dengan benar,
+  termasuk Pawukon, Wewaran, Sasih, Purnama/Tilem, dan daftar Rahinan (Kajeng Kliwon,
+  Galungan, Kuningan, Tumpek, dll).
+  Sumber: https://github.com/peradnya/balinese-date-js-lib
+-->
+<script src="https://unpkg.com/balinese-date-js-lib/umd/balinese-date-js-lib.min.js"></script>
+
 <style>
 :root {
   --bg-black: #08080A;
@@ -142,6 +151,19 @@ body {
   padding: 20px;
 }
 .modal-overlay.active { display: flex; }
+
+/* Kalender cell */
+.cal-cell {
+  min-height: 56px;
+  border-radius: 10px;
+  border: 1px solid rgba(255,255,255,0.08);
+  padding: 5px;
+  cursor: pointer;
+  transition: border-color .2s ease, background .2s ease;
+}
+.cal-cell:active { background: var(--gold-glow); }
+.cal-cell.today { border-color: var(--gold-primary); box-shadow: 0 0 0 1px var(--gold-primary) inset; }
+.cal-cell.empty { border: none; }
 </style>
 </head>
 <body class="bg-[#08080A] text-zinc-100 min-h-screen">
@@ -173,6 +195,14 @@ body {
     <button onclick="closeModal('forgotModal')" class="w-full py-3 bg-jinara-gold text-jinara-bg text-xs font-bold tracking-widest uppercase rounded-lg">
       MENGERTI
     </button>
+  </div>
+</div>
+
+<!-- DETAIL TANGGAL MODAL -->
+<div class="modal-overlay" id="dateDetailModal">
+  <div class="glass-card max-w-sm w-full p-6 rounded-2xl text-center border border-jinara-gold/30 relative">
+    <button onclick="closeModal('dateDetailModal')" class="absolute top-3 right-3 text-zinc-500 text-lg leading-none">✕</button>
+    <div id="detailContent"></div>
   </div>
 </div>
 
@@ -221,11 +251,31 @@ body {
   <main class="max-w-6xl mx-auto px-4 mt-6">
     <!-- PAGE 1: KALENDER -->
     <section class="page active" id="page-kalender">
-      <div class="glass-card rounded-2xl p-6 border border-zinc-800 mb-6">
-        <h2 class="text-xl font-extrabold text-white mb-2">Kalender Bali Bambang Gde Rawi</h2>
-        <p class="text-xs text-zinc-400 mb-4">Sistem perhitungan presisi wariga digital.</p>
-        <div class="grid grid-cols-7 gap-2 text-center text-xs font-bold text-zinc-400 mt-4" id="kalenderGrid">
+      <div class="glass-card rounded-2xl p-5 border border-zinc-800 mb-6">
+        <h2 class="text-xl font-extrabold text-white mb-1">Kalender Bali Bambang Gde Rawi</h2>
+        <p class="text-xs text-zinc-400 mb-4">Purnama, Tilem &amp; Kajeng Kliwon dihitung otomatis (Pengalantaka Eka Sungsang Paing).</p>
+
+        <div class="flex items-center justify-between mb-3">
+          <button onclick="changeMonth(-1)" class="px-3.5 py-1.5 rounded-lg border border-zinc-700 text-zinc-300 text-sm font-bold active:bg-zinc-800">‹</button>
+          <div id="kalMonthLabel" class="text-sm font-extrabold text-jinara-gold tracking-wide"></div>
+          <button onclick="changeMonth(1)" class="px-3.5 py-1.5 rounded-lg border border-zinc-700 text-zinc-300 text-sm font-bold active:bg-zinc-800">›</button>
+        </div>
+
+        <div class="grid grid-cols-7 gap-1.5 text-center text-[10px] font-bold text-zinc-500 uppercase mb-1.5">
+          <div>Min</div><div>Sen</div><div>Sel</div><div>Rab</div><div>Kam</div><div>Jum</div><div>Sab</div>
+        </div>
+
+        <div class="grid grid-cols-7 gap-1.5" id="kalenderGrid">
           <!-- Calendar Days Grid Rendered dynamically -->
+        </div>
+
+        <div class="flex flex-wrap gap-3 justify-center mt-5 pt-4 border-t border-zinc-800 text-[10px] text-zinc-400">
+          <span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-red-400"></span>Penanggal</span>
+          <span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-zinc-100"></span>Pangelong</span>
+          <span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-jinara-gold"></span>Purnama</span>
+          <span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-zinc-500 border border-jinara-gold-dark"></span>Tilem</span>
+          <span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-purple-500"></span>Kajeng Kliwon</span>
+          <span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-blue-400"></span>Rahinan lain</span>
         </div>
       </div>
     </section>
@@ -244,9 +294,11 @@ body {
           </select>
           <select id="pThn" class="bg-zinc-900 p-2.5 rounded-xl border border-zinc-700 text-xs text-white"></select>
         </div>
-        <button onclick="alert('Hasil kalkulasi siap dihitung.')" class="px-6 py-3 bg-jinara-gold text-zinc-950 font-bold text-xs rounded-xl uppercase tracking-wider">
+        <button onclick="hitungPewarigaan()" class="px-6 py-3 bg-jinara-gold text-zinc-950 font-bold text-xs rounded-xl uppercase tracking-wider">
           Hitung Pewarigaan
         </button>
+
+        <div id="pewarigaanResult" class="mt-6 text-left"></div>
       </div>
     </section>
 
@@ -254,7 +306,29 @@ body {
     <section class="page hidden" id="page-padewasan">
       <div class="glass-card rounded-2xl p-6 border border-zinc-800">
         <h2 class="text-xl font-extrabold text-white mb-2">Pencarian Hari Baik (Padewasan)</h2>
-        <p class="text-xs text-zinc-400">Temukan hari baik untuk pernikahan, usaha, membangun rumah, dan upacara.</p>
+        <p class="text-xs text-zinc-400 mb-5">Rekomendasi umum berdasarkan pedoman wariga. Untuk keputusan besar (pernikahan &amp; upacara besar), tetap disarankan konsultasi pemangku/juru wacak.</p>
+
+        <div class="grid grid-cols-2 gap-2.5 mb-4">
+          <select id="padAktivitas" class="bg-zinc-900 p-2.5 rounded-xl border border-zinc-700 text-xs text-white col-span-2">
+            <option value="usaha">Memulai Usaha / Bisnis</option>
+            <option value="renovasi">Renovasi / Bangun Rumah</option>
+            <option value="upacara">Upacara / Ritual</option>
+            <option value="pernikahan">Pernikahan</option>
+          </select>
+          <select id="padBulan" class="bg-zinc-900 p-2.5 rounded-xl border border-zinc-700 text-xs text-white">
+            <option value="0">Januari</option><option value="1">Februari</option><option value="2">Maret</option>
+            <option value="3">April</option><option value="4">Mei</option><option value="5">Juni</option>
+            <option value="6">Juli</option><option value="7">Agustus</option><option value="8">September</option>
+            <option value="9">Oktober</option><option value="10">November</option><option value="11">Desember</option>
+          </select>
+          <select id="padTahun" class="bg-zinc-900 p-2.5 rounded-xl border border-zinc-700 text-xs text-white"></select>
+        </div>
+
+        <button onclick="cariHariBaik()" class="w-full py-3 bg-jinara-gold text-zinc-950 font-bold text-xs rounded-xl uppercase tracking-wider mb-5">
+          Cari Hari Baik
+        </button>
+
+        <div id="padewasanResults" class="space-y-2"></div>
       </div>
     </section>
 
@@ -269,13 +343,27 @@ body {
 </div>
 
 <script>
+// ============================================================
+// BALINESE DATE — bind library
+// ============================================================
+const BD = window.BalineseDate;
+const { BalineseDate, BalineseDateUtil, SasihDayInfo, Rahinan } = BD;
+
+const MONTH_NAMES = ["Januari","Februari","Maret","April","Mei","Juni","Juli","Agustus","September","Oktober","November","Desember"];
+const MONTH_SHORT = ["Jan","Feb","Mar","Apr","Mei","Jun","Jul","Agu","Sep","Okt","Nov","Des"];
+
+// ============================================================
 // PWA Service Worker Registration
+// ============================================================
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
     navigator.serviceWorker.register('./sw.js').catch(err => console.log('SW Fail:', err));
   });
 }
 
+// ============================================================
+// AUTH
+// ============================================================
 function login() {
   const pwd = document.getElementById('passwordInput').value.trim();
   if(pwd === 'JINARAS' || pwd === 'jinaras') {
@@ -312,12 +400,229 @@ function navigateTo(pageId) {
   }
 }
 
-// Populate Date Selectors
-window.onload = function() {
+// ============================================================
+// KALENDER BALI — bulan yang sedang ditampilkan
+// ============================================================
+let calYear, calMonth;
+
+function initKalender() {
+  const now = new Date();
+  calYear = now.getFullYear();
+  calMonth = now.getMonth();
+  renderKalender();
+}
+
+function changeMonth(delta) {
+  calMonth += delta;
+  if (calMonth < 0) { calMonth = 11; calYear--; }
+  if (calMonth > 11) { calMonth = 0; calYear++; }
+  renderKalender();
+}
+
+function renderKalender() {
+  document.getElementById('kalMonthLabel').textContent = `${MONTH_NAMES[calMonth]} ${calYear}`;
+
+  const grid = document.getElementById('kalenderGrid');
+  grid.innerHTML = '';
+
+  const firstDay = new Date(calYear, calMonth, 1);
+  const startOffset = firstDay.getDay();
+  const daysInMonth = new Date(calYear, calMonth + 1, 0).getDate();
+  const todayStr = new Date().toDateString();
+
+  for (let i = 0; i < startOffset; i++) {
+    grid.insertAdjacentHTML('beforeend', '<div class="cal-cell empty"></div>');
+  }
+
+  for (let d = 1; d <= daysInMonth; d++) {
+    const jsDate = new Date(calYear, calMonth, d);
+    const bd = new BalineseDate(jsDate);
+    const rahinan = BalineseDateUtil.getRahinan(bd);
+
+    const isPenanggal = bd.sasihDayInfo.reference === SasihDayInfo.PENANGGAL;
+    const isPurnama = bd.sasihDayInfo === SasihDayInfo.PURNAMA;
+    const isTilem = bd.sasihDayInfo === SasihDayInfo.TILEM;
+    const isKajeng = rahinan.includes(Rahinan.KAJENG_KLIWON);
+    const otherRahinan = rahinan.filter(r => r !== Rahinan.PURNAMA && r !== Rahinan.TILEM && r !== Rahinan.KAJENG_KLIWON);
+    const isToday = jsDate.toDateString() === todayStr;
+
+    let dots = '';
+    if (isPurnama) dots += '<span class="w-1.5 h-1.5 rounded-full bg-jinara-gold"></span>';
+    if (isTilem) dots += '<span class="w-1.5 h-1.5 rounded-full bg-zinc-500 border border-jinara-gold-dark"></span>';
+    if (isKajeng) dots += '<span class="w-1.5 h-1.5 rounded-full bg-purple-500"></span>';
+    if (otherRahinan.length) dots += '<span class="w-1.5 h-1.5 rounded-full bg-blue-400"></span>';
+
+    grid.insertAdjacentHTML('beforeend', `
+      <div class="cal-cell${isToday ? ' today' : ''}" onclick="showDateDetail(${calYear},${calMonth},${d})">
+        <div class="text-[13px] font-extrabold ${isPenanggal ? 'text-red-400' : 'text-zinc-100'}">${d}</div>
+        <div class="flex gap-1 mt-1 flex-wrap">${dots}</div>
+      </div>
+    `);
+  }
+}
+
+function showDateDetail(y, m, d) {
+  const jsDate = new Date(y, m, d);
+  const bd = new BalineseDate(jsDate);
+  const rahinan = BalineseDateUtil.getRahinan(bd);
+  const isPurnama = bd.sasihDayInfo === SasihDayInfo.PURNAMA;
+  const isTilem = bd.sasihDayInfo === SasihDayInfo.TILEM;
+  const isKajeng = rahinan.includes(Rahinan.KAJENG_KLIWON);
+
+  const badge = (text, cls) => `<span class="inline-block text-[10px] font-black px-2 py-1 rounded-md border ${cls} m-0.5">${text}</span>`;
+
+  let badges = '';
+  if (isPurnama) badges += badge('PURNAMA', 'bg-jinara-gold text-zinc-950 border-jinara-gold');
+  if (isTilem) badges += badge('TILEM', 'bg-zinc-800 text-jinara-gold border-jinara-gold-dark');
+  if (isKajeng) badges += badge('KAJENG KLIWON', 'bg-purple-900/40 text-purple-300 border-purple-700');
+  rahinan.forEach(r => {
+    if (r !== Rahinan.PURNAMA && r !== Rahinan.TILEM && r !== Rahinan.KAJENG_KLIWON) {
+      badges += badge(r.name.toUpperCase(), 'bg-blue-900/30 text-blue-300 border-blue-700');
+    }
+  });
+  if (!badges) badges = '<span class="text-zinc-500 text-xs">Hari biasa, tidak ada rahinan khusus</span>';
+
+  document.getElementById('detailContent').innerHTML = `
+    <div class="text-2xl font-black text-white mb-1">${d} ${MONTH_NAMES[m]} ${y}</div>
+    <div class="text-jinara-gold text-sm font-bold tracking-wider mb-4">${bd.saptaWara.name} ${bd.pancaWara.name} · Wuku ${bd.wuku.name}</div>
+    <div class="grid grid-cols-2 gap-3 text-left text-xs mb-5">
+      <div><span class="text-zinc-500">Sasih</span><br><span class="text-white font-semibold">${bd.sasih.name} (${bd.sasihDay.join('/')})</span></div>
+      <div><span class="text-zinc-500">Saka</span><br><span class="text-white font-semibold">${bd.saka}</span></div>
+      <div><span class="text-zinc-500">Triwara</span><br><span class="text-white font-semibold">${bd.triWara.name}</span></div>
+      <div><span class="text-zinc-500">Sadwara</span><br><span class="text-white font-semibold">${bd.sadWara.name}</span></div>
+    </div>
+    <div class="flex flex-wrap justify-center">${badges}</div>
+  `;
+  openModal('dateDetailModal');
+}
+
+// ============================================================
+// PEWARIGAAN — karakter kelahiran
+// ============================================================
+function hitungPewarigaan() {
+  const tgl = parseInt(document.getElementById('pTgl').value);
+  const bln = parseInt(document.getElementById('pBln').value);
+  const thn = parseInt(document.getElementById('pThn').value);
+
+  const bd = new BalineseDate(new Date(thn, bln - 1, tgl));
+  const urip = bd.saptaWara.urip + bd.pancaWara.urip;
+
+  document.getElementById('pewarigaanResult').innerHTML = `
+    <div class="glass-card rounded-xl p-5 border border-jinara-gold/20">
+      <div class="text-center mb-4">
+        <div class="text-jinara-gold text-lg font-black">${bd.saptaWara.name} ${bd.pancaWara.name}</div>
+        <div class="text-zinc-400 text-xs">Wuku ${bd.wuku.name} · ${bd.sasih.name} · Saka ${bd.saka}</div>
+      </div>
+      <div class="grid grid-cols-2 gap-3 text-xs">
+        <div><span class="text-zinc-500">Urip / Neptu</span><br><span class="text-white font-semibold">${urip}</span></div>
+        <div><span class="text-zinc-500">Sadwara</span><br><span class="text-white font-semibold">${bd.sadWara.name}</span></div>
+        <div><span class="text-zinc-500">Pararasan</span><br><span class="text-white font-semibold">${bd.pararasan.name}</span></div>
+        <div><span class="text-zinc-500">Dasawara</span><br><span class="text-white font-semibold">${bd.dasaWara.name}</span></div>
+      </div>
+    </div>
+  `;
+}
+
+// ============================================================
+// PADEWASAN — pencarian hari baik
+// (Sumber: pedoman umum wariga — Redite/Anggara/Buda + Paing/Pon/Wage
+//  ideal untuk usaha; Buda/Wraspati + Wage/Pon ideal untuk renovasi.
+//  Tilem selalu ditandai HINDARI untuk memulai hal baru;
+//  Kajeng Kliwon ditandai HATI-HATI, bukan otomatis buruk.)
+// ============================================================
+const PAD_RULES = {
+  usaha: { label: 'usaha/bisnis', idealSapta: ['Redite', 'Anggara', 'Buda'], idealPanca: ['Paing', 'Pon', 'Wage'], avoidWuku: ['Wayang', 'Kuningan'] },
+  renovasi: { label: 'renovasi/bangun rumah', idealSapta: ['Buda', 'Wraspati'], idealPanca: ['Wage', 'Pon'], avoidWuku: [] },
+  upacara: { label: 'upacara/ritual', idealSapta: [], idealPanca: [], avoidWuku: [] },
+  pernikahan: { label: 'pernikahan', idealSapta: [], idealPanca: [], avoidWuku: [] }
+};
+
+function cariHariBaik() {
+  const aktivitas = document.getElementById('padAktivitas').value;
+  const bulan = parseInt(document.getElementById('padBulan').value);
+  const tahun = parseInt(document.getElementById('padTahun').value);
+  const rule = PAD_RULES[aktivitas];
+  const daysInMonth = new Date(tahun, bulan + 1, 0).getDate();
+
+  const results = [];
+
+  for (let d = 1; d <= daysInMonth; d++) {
+    const bd = new BalineseDate(new Date(tahun, bulan, d));
+    const rahinan = BalineseDateUtil.getRahinan(bd);
+    const isTilem = bd.sasihDayInfo === SasihDayInfo.TILEM;
+    const isPurnama = bd.sasihDayInfo === SasihDayInfo.PURNAMA;
+    const isKajeng = rahinan.includes(Rahinan.KAJENG_KLIWON);
+
+    let status = 'netral';
+    const alasan = [];
+
+    if (isTilem) {
+      status = 'hindari';
+      alasan.push('Tilem — bulan mati, umumnya dihindari untuk memulai hal baru');
+    } else if (isKajeng && (aktivitas === 'pernikahan' || aktivitas === 'usaha')) {
+      status = 'hatihati';
+      alasan.push('Kajeng Kliwon — energi spiritual tinggi, perlu kehati-hatian ekstra');
+    } else if (rule.avoidWuku.includes(bd.wuku.name)) {
+      status = 'hindari';
+      alasan.push(`Wuku ${bd.wuku.name} kurang ideal untuk ${rule.label}`);
+    } else if (rule.idealSapta.includes(bd.saptaWara.name) && rule.idealPanca.includes(bd.pancaWara.name)) {
+      status = 'baik';
+      alasan.push(`${bd.saptaWara.name} ${bd.pancaWara.name} — kombinasi ideal untuk ${rule.label}`);
+    } else if (rule.idealSapta.includes(bd.saptaWara.name) || rule.idealPanca.includes(bd.pancaWara.name)) {
+      status = 'cukup';
+      alasan.push(`${bd.saptaWara.name} ${bd.pancaWara.name} — cukup mendukung`);
+    }
+
+    if (isPurnama) {
+      alasan.push('Purnama — baik untuk persembahyangan/upacara');
+      if (status === 'netral') status = 'cukup';
+    }
+
+    if (status !== 'netral') results.push({ d, bd, status, alasan });
+  }
+
+  const STYLE = {
+    baik:     { label: 'BAIK',      cls: 'text-emerald-400 border-emerald-700 bg-emerald-900/20' },
+    cukup:    { label: 'CUKUP',     cls: 'text-jinara-gold border-jinara-gold/40 bg-jinara-gold/10' },
+    hatihati: { label: 'HATI-HATI', cls: 'text-purple-300 border-purple-700 bg-purple-900/20' },
+    hindari:  { label: 'HINDARI',   cls: 'text-red-400 border-red-800 bg-red-900/20' }
+  };
+
+  const container = document.getElementById('padewasanResults');
+
+  if (results.length === 0) {
+    container.innerHTML = '<p class="text-xs text-zinc-500 text-center py-4">Tidak ada hari yang menonjol bulan ini — semua tergolong netral.</p>';
+    return;
+  }
+
+  container.innerHTML = results.map(r => {
+    const st = STYLE[r.status];
+    return `
+      <div class="flex items-start justify-between gap-3 p-3 rounded-xl border ${st.cls}">
+        <div>
+          <div class="text-sm font-bold text-white">${r.d} ${MONTH_SHORT[bulan]} ${tahun} · ${r.bd.saptaWara.name} ${r.bd.pancaWara.name}</div>
+          <div class="text-[11px] text-zinc-400 mt-0.5">${r.alasan.join(' · ')}</div>
+        </div>
+        <span class="text-[10px] font-black px-2 py-1 rounded-md border ${st.cls} whitespace-nowrap">${st.label}</span>
+      </div>
+    `;
+  }).join('');
+}
+
+// ============================================================
+// Populate Date Selectors + init kalender saat halaman dimuat
+// ============================================================
+window.onload = function () {
   const pTgl = document.getElementById('pTgl');
   const pThn = document.getElementById('pThn');
-  if(pTgl) for(let i=1; i<=31; i++) pTgl.innerHTML += `<option value="${i}">${i}</option>`;
-  if(pThn) for(let y=2026; y>=1930; y--) pThn.innerHTML += `<option value="${y}">${y}</option>`;
+  const padTahun = document.getElementById('padTahun');
+  const thisYear = new Date().getFullYear();
+
+  if (pTgl) for (let i = 1; i <= 31; i++) pTgl.innerHTML += `<option value="${i}">${i}</option>`;
+  if (pThn) for (let y = thisYear; y >= 1930; y--) pThn.innerHTML += `<option value="${y}">${y}</option>`;
+  if (padTahun) for (let y = thisYear + 1; y >= thisYear - 1; y--) padTahun.innerHTML += `<option value="${y}"${y===thisYear?' selected':''}>${y}</option>`;
+
+  initKalender();
 };
 </script>
 </body>
