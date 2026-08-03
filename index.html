@@ -50,7 +50,7 @@
   Library kalender Bali open-source (Apache-2.0), sudah mengimplementasikan
   Pengalantaka Eka Sungsang Pon (sebelum 2000) & Paing (2000-sekarang) dengan benar,
   termasuk Pawukon, Wewaran, Sasih, Purnama/Tilem, dan daftar Rahinan (Kajeng Kliwon,
-  Galungan, Kuningan, Tumpek, dll).
+  Galungan, Kuningan, Tumpek, dll). Dipakai khusus untuk halaman Kalender Bali & Rahinan.
   Sumber: https://github.com/peradnya/balinese-date-js-lib
 -->
 <script src="https://unpkg.com/balinese-date-js-lib/umd/balinese-date-js-lib.min.js"></script>
@@ -103,7 +103,8 @@ body {
   font-size: clamp(68px, 18vw, 108px);
   line-height: 0.82;
   letter-spacing: -2px;
-  color: #FFFFFF;
+  color: var(--gold-light);
+  text-shadow: 0 0 46px rgba(197, 160, 89, 0.35);
   text-align: center;
   margin-bottom: 60px;
 }
@@ -151,6 +152,7 @@ body {
   padding: 20px;
 }
 .modal-overlay.active { display: flex; }
+.modal-overlay .modal-scroll { max-height: 82vh; overflow-y: auto; }
 
 /* Kalender cell */
 .cal-cell {
@@ -185,7 +187,7 @@ body {
   <div class="brand-title">JI<br>NA<br>RA</div>
 
   <input type="password" class="minimal-input" id="passwordInput" placeholder="KATA SANDI" autocomplete="off" onkeypress="if(event.key==='Enter') login()">
-  
+
   <button class="gold-outline-btn" onclick="login()">MASUK</button>
 
   <p id="errorMsg" class="text-xs text-red-400 font-medium tracking-widest mt-4 uppercase opacity-0 transition-opacity duration-300">
@@ -212,7 +214,7 @@ body {
 
 <!-- DETAIL TANGGAL MODAL -->
 <div class="modal-overlay" id="dateDetailModal">
-  <div class="glass-card max-w-sm w-full p-6 rounded-2xl text-center border border-jinara-gold/30 relative">
+  <div class="glass-card max-w-sm w-full p-6 rounded-2xl text-center border border-jinara-gold/30 relative modal-scroll">
     <button onclick="closeModal('dateDetailModal')" class="absolute top-3 right-3 text-zinc-500 text-lg leading-none">✕</button>
     <div id="detailContent"></div>
   </div>
@@ -224,7 +226,7 @@ body {
   <!-- Header Navigation -->
   <header class="border-b border-zinc-800/80 bg-zinc-950/90 sticky top-0 z-50 backdrop-blur-md">
     <div class="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
-      
+
       <!-- Brand Logo Header -->
       <div class="flex items-center space-x-3 cursor-pointer" onclick="navigateTo('kalender')">
         <div class="w-9 h-9 rounded-lg border border-jinara-gold/40 flex flex-col items-center justify-center bg-jinara-gold/10 text-jinara-gold font-black text-[7px] tracking-wider leading-[0.95] text-center select-none">
@@ -265,7 +267,7 @@ body {
     <section class="page active" id="page-kalender">
       <div class="glass-card rounded-2xl p-5 border border-zinc-800 mb-6">
         <h2 class="text-xl font-extrabold text-white mb-1">Kalender Bali Bambang Gde Rawi</h2>
-        <p class="text-xs text-zinc-400 mb-4">Purnama, Tilem &amp; Kajeng Kliwon dihitung otomatis (Pengalantaka Eka Sungsang Paing).</p>
+        <p class="text-xs text-zinc-400 mb-4">Purnama, Tilem &amp; Kajeng Kliwon dihitung otomatis (Pengalantaka Eka Sungsang Paing). Klik tanggal untuk keterangan lengkap 10 wewaran &amp; dewasa.</p>
 
         <div class="flex items-center justify-between mb-3">
           <button onclick="changeMonth(-1)" class="px-3.5 py-1.5 rounded-lg border border-zinc-700 text-zinc-300 text-sm font-bold active:bg-zinc-800">‹</button>
@@ -291,7 +293,8 @@ body {
     <!-- PAGE 2: PEWARIGAAN -->
     <section class="page hidden" id="page-pewarigaan">
       <div class="glass-card rounded-2xl p-6 border border-zinc-800 text-center">
-        <h2 class="text-xl font-extrabold text-white mb-4">Hitung Pewarigaan Kelahiran</h2>
+        <h2 class="text-xl font-extrabold text-white mb-1">Hitung Pewarigaan Kelahiran</h2>
+        <p class="text-xs text-zinc-400 mb-4">Profil lengkap 10 wewaran (Ekawara–Dasawara) beserta sifat, watak wuku, Pancasuda, dan pantangan.</p>
         <div class="grid grid-cols-3 gap-2 max-w-sm mx-auto mb-4">
           <select id="pTgl" class="bg-zinc-900 p-2.5 rounded-xl border border-zinc-700 text-xs text-white"></select>
           <select id="pBln" class="bg-zinc-900 p-2.5 rounded-xl border border-zinc-700 text-xs text-white">
@@ -314,14 +317,19 @@ body {
     <section class="page hidden" id="page-padewasan">
       <div class="glass-card rounded-2xl p-6 border border-zinc-800">
         <h2 class="text-xl font-extrabold text-white mb-2">Pencarian Hari Baik (Padewasan)</h2>
-        <p class="text-xs text-zinc-400 mb-5">Rekomendasi umum berdasarkan pedoman wariga. Untuk keputusan besar (pernikahan &amp; upacara besar), tetap disarankan konsultasi pemangku/juru wacak.</p>
+        <p class="text-xs text-zinc-400 mb-5">Mesin dewasa ayu berbasis rumus wariga terformulasi (bukan tabel statis) — mencakup ± 29 nama dewasa ayu/ala per kategori. Untuk keputusan besar (pernikahan &amp; upacara besar), tetap disarankan konsultasi pemangku/juru wacak.</p>
 
         <div class="grid grid-cols-2 gap-2.5 mb-4">
-          <select id="padAktivitas" class="bg-zinc-900 p-2.5 rounded-xl border border-zinc-700 text-xs text-white col-span-2">
-            <option value="usaha">Memulai Usaha / Bisnis</option>
-            <option value="renovasi">Renovasi / Bangun Rumah</option>
-            <option value="upacara">Upacara / Ritual</option>
-            <option value="pernikahan">Pernikahan</option>
+          <select id="padKategori" class="bg-zinc-900 p-2.5 rounded-xl border border-zinc-700 text-xs text-white col-span-2">
+            <option value="">Semua kategori</option>
+            <option value="umum">Umum</option>
+            <option value="usaha">Usaha / Dagang</option>
+            <option value="membangun">Membangun</option>
+            <option value="pertanian">Pertanian</option>
+            <option value="peternakan">Peternakan</option>
+            <option value="upacara">Upacara</option>
+            <option value="spiritual">Spiritual</option>
+            <option value="peralatan">Peralatan</option>
           </select>
           <select id="padBulan" class="bg-zinc-900 p-2.5 rounded-xl border border-zinc-700 text-xs text-white">
             <option value="0">Januari</option><option value="1">Februari</option><option value="2">Maret</option>
@@ -343,19 +351,575 @@ body {
     <!-- PAGE 4: JODOH -->
     <section class="page hidden" id="page-jodoh">
       <div class="glass-card rounded-2xl p-6 border border-zinc-800 text-center">
-        <h2 class="text-xl font-extrabold text-white mb-2">Perhitungan Jodoh Tri Pramana</h2>
-        <p class="text-xs text-zinc-400">Analisis kecocokan pasangan berdasarkan sisa 16.</p>
+        <h2 class="text-xl font-extrabold text-white mb-2">Perhitungan Jodoh (Petung Pancasuda)</h2>
+        <p class="text-xs text-zinc-400 mb-5">Kecocokan pasangan dihitung dari gabungan urip Saptawara + Pancawara kedua tanggal lahir, dibagi 7 (Petung Pancasuda).</p>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 max-w-md mx-auto mb-4 text-left">
+          <div>
+            <label class="text-[10px] text-zinc-500 uppercase tracking-wider">Tanggal lahir Anda</label>
+            <input type="date" id="jdDate1" class="w-full mt-1 bg-zinc-900 p-2.5 rounded-xl border border-zinc-700 text-xs text-white">
+          </div>
+          <div>
+            <label class="text-[10px] text-zinc-500 uppercase tracking-wider">Tanggal lahir Pasangan</label>
+            <input type="date" id="jdDate2" class="w-full mt-1 bg-zinc-900 p-2.5 rounded-xl border border-zinc-700 text-xs text-white">
+          </div>
+        </div>
+
+        <button onclick="hitungJodoh()" class="px-6 py-3 bg-jinara-gold text-zinc-950 font-bold text-xs rounded-xl uppercase tracking-wider">
+          Hitung Kecocokan
+        </button>
+
+        <div id="jodohResult" class="mt-6 text-left"></div>
       </div>
     </section>
   </main>
 </div>
 
 <script>
+/* ==========================================================================
+   BALI ENGINE — perhitungan Pewarigaan (10 wewaran), Padewasan (dewasa ayu)
+   & Jodoh (Petung Pancasuda). Dikalibrasi & diverifikasi terhadap
+   kalenderbali.org / babadbali.com untuk tanggal 3 Agustus 2026
+   (Soma Paing, Wuku Merakih, Saka 1948, Pangelong 5 sasih Karo).
+   Namespace terpisah dari balinese-date-js-lib (window.Bali vs window.BalineseDate)
+   supaya tidak bentrok — dipakai khusus oleh halaman Pewarigaan, Padewasan & Jodoh.
+   ========================================================================== */
+(function (global) {
+  "use strict";
+
+  function toJDN(y, m, d) {
+    var a = Math.floor((14 - m) / 12);
+    var yy = y + 4800 - a;
+    var mm = m + 12 * a - 3;
+    return (
+      d +
+      Math.floor((153 * mm + 2) / 5) +
+      365 * yy +
+      Math.floor(yy / 4) -
+      Math.floor(yy / 100) +
+      Math.floor(yy / 400) -
+      32045
+    );
+  }
+
+  function dateToJDN(date) {
+    return toJDN(date.getUTCFullYear(), date.getUTCMonth() + 1, date.getUTCDate());
+  }
+
+  function mkUTC(y, m, d) {
+    return new Date(Date.UTC(y, m - 1, d));
+  }
+
+  function sisa(n, mod) {
+    var r = ((n % mod) + mod) % mod;
+    return r === 0 ? mod : r;
+  }
+
+  var WUKU = [
+    { name: "Sinta", dewata: "Yamadipati" },
+    { name: "Landep", dewata: "Mahadewa" },
+    { name: "Ukir", dewata: "Mahayekti" },
+    { name: "Kulantir", dewata: "Sangkara" },
+    { name: "Tolu", dewata: "Bayu" },
+    { name: "Gumbreg", dewata: "Candra" },
+    { name: "Wariga", dewata: "Kwera" },
+    { name: "Warigadean", dewata: "Sri" },
+    { name: "Julungwangi", dewata: "Sri" },
+    { name: "Sungsang", dewata: "Gurunika/Bisma" },
+    { name: "Dungulan", dewata: "Indra" },
+    { name: "Kuningan", dewata: "Indra" },
+    { name: "Langkir", dewata: "Kala" },
+    { name: "Medangsia", dewata: "Brahma" },
+    { name: "Pujut", dewata: "Guritna" },
+    { name: "Pahang", dewata: "Tantra" },
+    { name: "Krulut", dewata: "Wisnu" },
+    { name: "Merakih", dewata: "Surenggana" },
+    { name: "Tambir", dewata: "Siwa" },
+    { name: "Medangkungan", dewata: "Basuki" },
+    { name: "Matal", dewata: "Sakri" },
+    { name: "Uye", dewata: "Kuwera" },
+    { name: "Menail", dewata: "Citragotra" },
+    { name: "Prangbakat", dewata: "Bisma" },
+    { name: "Bala", dewata: "Durga" },
+    { name: "Ugu", dewata: "Singajanma/Singagana" },
+    { name: "Wayang", dewata: "Sambu" },
+    { name: "Kelawu", dewata: "Sadana" },
+    { name: "Dukut", dewata: "Baruna" },
+    { name: "Watugunung", dewata: "Siwa/Kala Sungsang" },
+  ];
+
+  var EPOCH_SUNDAY_JDN = dateToJDN(mkUTC(2026, 8, 2)) - 7 * 17;
+
+  function pawukon(jdn) {
+    var pos = ((jdn - EPOCH_SUNDAY_JDN) % 210 + 210) % 210;
+    var wukuIdx0 = Math.floor(pos / 7);
+    var saptawaraIdx0 = pos % 7;
+    return { wukuIdx0: wukuIdx0, saptawaraIdx0: saptawaraIdx0 };
+  }
+
+  var EKAWARA = [{ name: "Luang", urip: 1, dewata: "Sanghyang Taya", arah: "Barat laut" }];
+  var DWIWARA = [
+    { name: "Menga", urip: 5, dewata: "Sanghyang Kalima", arah: "Timur" },
+    { name: "Pepet", urip: 4, dewata: "Sanghyang Timira", arah: "Utara" },
+  ];
+  var TRIWARA = [
+    { name: "Pasah", urip: 9, dewata: "Sanghyang Cika", arah: "Selatan" },
+    { name: "Beteng", urip: 4, dewata: "Sanghyang Wacika", arah: "Utara" },
+    { name: "Kajeng", urip: 7, dewata: "Sanghyang Manacika", arah: "Barat" },
+  ];
+  var CATURWARA = [
+    { name: "Sri", urip: 6, dewata: "Bagawan Bregu", arah: "Timur laut" },
+    { name: "Laba", urip: 5, dewata: "Bagawan Kanwa", arah: "Barat daya" },
+    { name: "Jaya", urip: 1, dewata: "Bagawan Janaka", arah: "Barat laut" },
+    { name: "Menala", urip: 8, dewata: "Bagawan Narada", arah: "Tenggara" },
+  ];
+  var PANCAWARA = [
+    { name: "Umanis", urip: 5, dewata: "Sanghyang Iswara", arah: "Timur" },
+    { name: "Paing", urip: 9, dewata: "Sanghyang Brahma", arah: "Selatan" },
+    { name: "Pon", urip: 7, dewata: "Sanghyang Mahadewa", arah: "Barat" },
+    { name: "Wage", urip: 4, dewata: "Sanghyang Wisnu", arah: "Utara" },
+    { name: "Kliwon", urip: 8, dewata: "Sanghyang Ciwa", arah: "Tengah" },
+  ];
+  var SADWARA = [
+    { name: "Tungleh", urip: 7, dewata: "Sanghyang Indra", arah: "Barat" },
+    { name: "Aryang", urip: 6, dewata: "Sanghyang Baruna", arah: "Timur laut" },
+    { name: "Urukung", urip: 5, dewata: "Sanghyang Kuwera", arah: "Timur" },
+    { name: "Paniron", urip: 8, dewata: "Sanghyang Bayu", arah: "Tenggara" },
+    { name: "Was", urip: 9, dewata: "Sanghyang Bajra", arah: "Selatan" },
+    { name: "Maulu", urip: 3, dewata: "Sanghyang Erawan", arah: "Barat daya" },
+  ];
+  var SAPTAWARA = [
+    { name: "Redite", urip: 5, dewata: "Sanghyang Baskara", arah: "Timur" },
+    { name: "Soma", urip: 4, dewata: "Sanghyang Chandra", arah: "Utara" },
+    { name: "Anggara", urip: 3, dewata: "Sanghyang Angkara", arah: "Barat daya" },
+    { name: "Buda", urip: 7, dewata: "Sanghyang Udaka", arah: "Barat" },
+    { name: "Wrespati", urip: 8, dewata: "Sanghyang Guru", arah: "Tenggara" },
+    { name: "Sukra", urip: 6, dewata: "Sanghyang Bregu", arah: "Timur laut" },
+    { name: "Saniscara", urip: 9, dewata: "Sanghyang Wasu", arah: "Selatan" },
+  ];
+  var ASTAWARA = [
+    { name: "Sri", urip: 6, dewata: "Sanghyang Sri", arah: "Timur laut" },
+    { name: "Indra", urip: 5, dewata: "Sanghyang Indra", arah: "Timur" },
+    { name: "Guru", urip: 8, dewata: "Sanghyang Guru", arah: "Tenggara" },
+    { name: "Yama", urip: 9, dewata: "Sanghyang Yama", arah: "Selatan" },
+    { name: "Ludra", urip: 3, dewata: "Sanghyang Ludra", arah: "Barat daya" },
+    { name: "Brahma", urip: 7, dewata: "Sanghyang Brahma", arah: "Barat" },
+    { name: "Kala", urip: 1, dewata: "Sanghyang Kala", arah: "Barat laut" },
+    { name: "Uma", urip: 4, dewata: "Sanghyang Uma", arah: "Utara" },
+  ];
+  var SANGAWARA = [
+    { name: "Dangu", urip: 5, dewata: "Sanghyang Iswara", arah: "Timur" },
+    { name: "Jangur", urip: 8, dewata: "Sanghyang Maheswara", arah: "Tenggara" },
+    { name: "Gigis", urip: 9, dewata: "Sanghyang Brahma", arah: "Selatan" },
+    { name: "Nohan", urip: 3, dewata: "Sanghyang Rudra", arah: "Barat daya" },
+    { name: "Ogan", urip: 7, dewata: "Sanghyang Mahadewa", arah: "Barat" },
+    { name: "Erangan", urip: 1, dewata: "Sanghyang Sangkara", arah: "Barat laut" },
+    { name: "Urungan", urip: 4, dewata: "Sanghyang Wisnu", arah: "Utara" },
+    { name: "Tulus", urip: 6, dewata: "Sanghyang Sambu", arah: "Timur laut" },
+    { name: "Dadi", urip: 8, dewata: "Sanghyang Ciwa", arah: "Tengah" },
+  ];
+  var DASAWARA = [
+    { name: "Pandita", urip: 5, dewata: "Sanghyang Surya" },
+    { name: "Pati", urip: 7, dewata: "Sanghyang Kala Mertyu" },
+    { name: "Suka", urip: 10, dewata: "Sanghyang Semara" },
+    { name: "Duka", urip: 4, dewata: "Sanghyang Durga" },
+    { name: "Sri", urip: 6, dewata: "Sanghyang Amerta" },
+    { name: "Manuh", urip: 2, dewata: "Sanghyang Kala Lupa" },
+    { name: "Manusa", urip: 3, dewata: "Sanghyang Suksma" },
+    { name: "Raja", urip: 8, dewata: "Sanghyang Kala Ngis" },
+    { name: "Dewa", urip: 9, dewata: "Sanghyang Darma" },
+    { name: "Raksasa", urip: 1, dewata: "Sanghyang Maha Kala" },
+  ];
+  var INGKEL = ["Buku", "Wong", "Sato", "Mina", "Manuk", "Taru"];
+  var WATEK_MADYA = ["Gajah", "Watu", "Bhuta", "Suku", "Wong"];
+  var WATEK_ALIT = ["Uler", "Gajah", "Lembu", "Lintah"];
+  var PANCASUDA = [
+    { name: "Wasesa Segara", watak: "Berpikiran luas, pemaaf, tutur kata santun, berwibawa besar." },
+    { name: "Tunggak Semi", watak: "Rezeki senantiasa cukup, walau ditebang tetap bisa tumbuh lagi." },
+    { name: "Satriya Wibawa", watak: "Mendapat keberuntungan besar, kemuliaan, dan keluhuran." },
+    { name: "Sumur Sinaba", watak: "Berilmu, bijaksana, jadi tempat bertanya dan meminta tolong." },
+    { name: "Satriya Wirang", watak: "Rawan menanggung malu dan kesulitan; perlu upacara penetralisir." },
+    { name: "Bumi Kapetak", watak: "Agak tertutup hatinya namun rajin bekerja, tahan banting, bersih." },
+    { name: "Lebu Katiup Angin", watak: "Rawan kekurangan rezeki dan hidup berpindah-pindah." },
+  ];
+
+  function computeWewaran(date) {
+    var jdn = dateToJDN(date);
+    var pw = pawukon(jdn);
+    var wukuIdx1 = pw.wukuIdx0 + 1;
+    var sapta0 = pw.saptawaraIdx0;
+
+    var N = wukuIdx1 * 7 + sapta0;
+
+    var Ncatur = N, Nasta = N, Nsanga = N;
+    if (wukuIdx1 === 11 && sapta0 === 0) { Ncatur += 2; Nasta += 2; Nsanga += 2; }
+    if (wukuIdx1 === 11 && sapta0 === 1) { Ncatur += 1; Nasta += 1; Nsanga += 1; }
+
+    var panca = PANCAWARA[sisa(N, 5) - 1];
+    var sapta = SAPTAWARA[sapta0];
+    var uripTotal = panca.urip + sapta.urip;
+
+    var eka = uripTotal % 2 === 1 ? EKAWARA[0] : null;
+    var dwi = uripTotal % 2 === 0 ? DWIWARA[0] : DWIWARA[1];
+    var tri = TRIWARA[sisa(N, 3) - 1];
+    var catur = CATURWARA[sisa(Ncatur, 4) - 1];
+    var sad = SADWARA[sisa(N, 6) - 1];
+    var asta = ASTAWARA[sisa(Nasta, 8) - 1];
+    var sanga = SANGAWARA[sisa(Nsanga, 9) - 1];
+    var dasa = DASAWARA[sisa(uripTotal + 1, 10) - 1];
+    var ingkel = INGKEL[sisa(wukuIdx1, 6) - 1];
+    var watekMadya = WATEK_MADYA[sisa(uripTotal, 5) - 1];
+    var watekAlit = WATEK_ALIT[sisa(uripTotal, 4) - 1];
+    var pancasuda = PANCASUDA[sisa(uripTotal, 7) - 1];
+
+    return {
+      jdn: jdn, wuku: WUKU[pw.wukuIdx0], wukuIdx1: wukuIdx1, ingkel: ingkel,
+      ekawara: eka, dwiwara: dwi, triwara: tri, caturwara: catur, pancawara: panca,
+      sadwara: sad, saptawara: sapta, astawara: asta, sangawara: sanga, dasawara: dasa,
+      watekMadya: watekMadya, watekAlit: watekAlit, uripTotal: uripTotal, pancasuda: pancasuda,
+    };
+  }
+
+  var SYNODIC_MONTH = 29.530588861;
+  var SASIH_NAMES = ["Kasa","Karo","Katiga","Kapat","Kalima","Kanem","Kapitu","Kaulu","Kasanga","Kadasa","Desta","Sadha"];
+  var SASIH_INDEX = {};
+  SASIH_NAMES.forEach(function (n, i) { SASIH_INDEX[n.toLowerCase()] = i + 1; });
+  SASIH_INDEX["ketiga"] = 3; SASIH_INDEX["kewulu"] = 8; SASIH_INDEX["jiyestha"] = 11; SASIH_INDEX["kepitu"] = 7;
+
+  var RAW_EVENTS_2026 = [
+    ["2026-01-03", "purnama", "Kepitu"], ["2026-01-18", "tilem", "Kepitu"],
+    ["2026-02-02", "purnama", "Kaulu"], ["2026-02-16", "tilem", "Kaulu"],
+    ["2026-03-03", "purnama", "Kasanga"], ["2026-03-18", "tilem", "Kasanga"],
+    ["2026-04-02", "purnama", "Kadasa"], ["2026-04-16", "tilem", "Kadasa"],
+    ["2026-05-01", "purnama", "Desta"], ["2026-05-16", "tilem", "Desta"],
+    ["2026-05-31", "purnama", "Sadha"], ["2026-06-14", "tilem", "Sadha"],
+    ["2026-06-29", "purnama", "Kasa"], ["2026-07-14", "tilem", "Kasa"],
+    ["2026-07-29", "purnama", "Karo"], ["2026-08-12", "tilem", "Karo"],
+    ["2026-08-27", "purnama", "Katiga"], ["2026-09-11", "tilem", "Katiga"],
+    ["2026-09-26", "purnama", "Kapat"], ["2026-10-11", "tilem", "Kapat"],
+    ["2026-10-25", "purnama", "Kalima"], ["2026-11-09", "tilem", "Kalima"],
+    ["2026-11-24", "purnama", "Kanem"], ["2026-12-09", "tilem", "Kanem"],
+    ["2026-12-23", "purnama", "Kepitu"],
+  ];
+  var EVENTS = RAW_EVENTS_2026.map(function (e) {
+    var p = e[0].split("-").map(Number);
+    return { jdn: toJDN(p[0], p[1], p[2]), type: e[1], sasihIdx1: SASIH_INDEX[e[2].toLowerCase()] };
+  });
+
+  function extendBefore() {
+    var first = EVENTS[0];
+    var prevType = first.type === "tilem" ? "purnama" : "tilem";
+    var prevSasih = first.type === "tilem" ? first.sasihIdx1 : sisa(first.sasihIdx1 - 1, 12);
+    EVENTS.unshift({
+      jdn: Math.round(first.jdn - SYNODIC_MONTH / 2), type: prevType,
+      sasihIdx1: prevType === "tilem" ? prevSasih : first.sasihIdx1 === 1 ? 12 : first.sasihIdx1 - 1,
+      synthetic: true,
+    });
+  }
+  function extendAfter() {
+    var last = EVENTS[EVENTS.length - 1];
+    var nextType = last.type === "tilem" ? "purnama" : "tilem";
+    var nextSasih = last.type === "purnama" ? last.sasihIdx1 : (last.sasihIdx1 % 12) + 1;
+    EVENTS.push({ jdn: Math.round(last.jdn + SYNODIC_MONTH / 2), type: nextType, sasihIdx1: nextSasih, synthetic: true });
+  }
+
+  function findBracket(jdn) {
+    var guard = 0;
+    while (jdn < EVENTS[0].jdn && guard < 400) { extendBefore(); guard++; }
+    while (jdn > EVENTS[EVENTS.length - 1].jdn && guard < 400) { extendAfter(); guard++; }
+    for (var j = 0; j < EVENTS.length; j++) { if (EVENTS[j].jdn === jdn) return [EVENTS[j], EVENTS[j]]; }
+    for (var i = 0; i < EVENTS.length - 1; i++) {
+      if (jdn > EVENTS[i].jdn && jdn < EVENTS[i + 1].jdn) return [EVENTS[i], EVENTS[i + 1]];
+    }
+    return [EVENTS[0], EVENTS[1]];
+  }
+
+  function computeSasih(date) {
+    var jdn = dateToJDN(date);
+    var br = findBracket(jdn);
+    var a = br[0], b = br[1];
+    var phase, day, sasihIdx1, isTilem = false, isPurnama = false;
+
+    if (jdn === a.jdn) {
+      sasihIdx1 = a.sasihIdx1;
+      if (a.type === "tilem") { phase = "Tilem"; day = null; isTilem = true; }
+      else { phase = "Purnama"; day = 15; isPurnama = true; }
+    } else if (a.type === "tilem") {
+      phase = "Penanggal"; day = jdn - a.jdn; sasihIdx1 = b.sasihIdx1;
+    } else {
+      phase = "Pangelong"; day = jdn - a.jdn; sasihIdx1 = a.sasihIdx1;
+    }
+
+    var sasihName = SASIH_NAMES[sasihIdx1 - 1];
+
+    var gYear = date.getUTCFullYear();
+    var gMonth = date.getUTCMonth() + 1;
+    var caka = gYear - 78;
+    var beforeNyepi = false;
+    if (gMonth <= 2) beforeNyepi = true;
+    if (gMonth === 3 && sasihIdx1 === 9) beforeNyepi = true;
+    if (gMonth >= 4) beforeNyepi = false;
+    if (gMonth === 3 && sasihIdx1 !== 9) beforeNyepi = false;
+    if (beforeNyepi) caka -= 1;
+
+    return {
+      sasih: sasihName, sasihIdx1: sasihIdx1, phase: phase, day: day,
+      isTilem: isTilem, isPurnama: isPurnama, caka: caka, approx: !!(a.synthetic || b.synthetic),
+    };
+  }
+
+  var WUKU_WATAK = {
+    Sinta: "Pembawaan cerdas, berwibawa, namun mudah gelisah dan berubah pikiran; rezeki naik-turun, perlu ketekunan.",
+    Landep: "Pikiran tajam, suka ilmu pengetahuan dan senjata/alat tajam; cocok untuk pendidikan, kepemimpinan, dan pekerjaan yang butuh ketelitian.",
+    Ukir: "Berbakat seni dan keterampilan tangan, teliti, agak keras kepala; cocok jadi seniman, pengukir, atau perajin.",
+    Kulantir: "Berwajah menarik, ramah, disenangi banyak orang, namun kurang tahan uji dan mudah terpengaruh.",
+    Tolu: "Tenang, sabar, suka menolong, rezeki datang belakangan setelah berjuang; cocok pekerjaan sosial.",
+    Gumbreg: "Pekerja keras, hemat, penyayang keluarga, cocok di bidang pertanian dan peternakan; watak agak tertutup.",
+    Wariga: "Berbakat dagang dan berhitung, cerdik mencari peluang, namun perlu waspada godaan Rangda Tiga (kurang baik untuk hari pernikahan).",
+    Warigadean: "Mirip Wariga: cerdas berniaga, ramah, tetapi wuku ini juga tergolong Rangda Tiga sehingga dihindari untuk upacara pernikahan.",
+    Julungwangi: "Berperangai halus, disukai lawan jenis, pandai bicara; rezeki lancar bila tidak boros.",
+    Sungsang: "Berkemauan keras, suka tantangan, kadang keras kepala; perlu kehati-hatian dalam pengambilan keputusan besar.",
+    Dungulan: "Wuku istimewa (jatuhnya Hari Raya Galungan); berwibawa dan bertanggung jawab, unggul dalam persaingan (Jaya Tiga).",
+    Kuningan: "Wuku Hari Raya Kuningan; teguh pendirian, religius, penuh syukur; tidak memiliki unsur Guru (kurang cocok mulai belajar/berguru di wuku ini).",
+    Langkir: "Berkemauan besar, ambisius, kadang angkuh; perlu pengendalian diri agar rezeki dan hubungan tetap harmonis.",
+    Medangsia: "Baik hati, dermawan, disegani, namun kadang boros; cocok untuk kegiatan sosial dan keagamaan.",
+    Pujut: "Pekerja ulet, sedikit tertutup, namun setia kawan; termasuk wuku Rangda Tiga (kurang baik untuk menikah).",
+    Pahang: "Berwibawa, tegas, kadang emosional; termasuk wuku Rangda Tiga sehingga pernikahan sebaiknya dihindari di wuku ini.",
+    Krulut: "Lembut hati, penyayang, disukai lingkungan; wuku jatuhnya Tumpek Krulut (piodalan gambelan/kesenian).",
+    Merakih: "Rajin, tekun, panjang umur, cukup rezeki bila telaten; wataknya cenderung tertutup tapi pekerja keras.",
+    Tambir: "Berwibawa, suka menolong, sedikit keras kepala; rezeki cukup dengan usaha yang stabil.",
+    Medangkungan: "Ramah, mudah bergaul, kurang cocok untuk pekerjaan yang butuh konsistensi tinggi; tidak memiliki unsur Guru.",
+    Matal: "Berbakat memimpin, berani mengambil risiko, namun perlu waspada sifat tergesa-gesa.",
+    Uye: "Tenang, penyabar, setia, rezeki datang perlahan tapi pasti; cocok pekerjaan yang butuh konsistensi.",
+    Menail: "Cermat, hati-hati, agak pendiam; baik untuk pekerjaan administratif dan perencanaan.",
+    Prangbakat: "Berjiwa pemimpin perang, pemberani, tangkas, jujur, namun pemarah dan pemalu; awal perkataan dingin, akhirnya bisa memanas. Cenderung berumur panjang dan cukup rezeki.",
+    Bala: "Suka bekerja keras, agak keras kepala, perlu kesabaran ekstra; rezeki naik turun mengikuti usaha.",
+    Ugu: "Bijaksana, disegani, cocok jadi penasihat atau tokoh masyarakat.",
+    Wayang: "Berbakat seni pertunjukan/komunikasi, pandai bicara, disukai banyak orang.",
+    Kelawu: "Tenang, sederhana, jarang neko-neko; rezeki cukup, cocok pekerjaan rutin dan telaten.",
+    Dukut: "Rendah hati, suka menolong tanpa pamrih, hidup sederhana; kurang cocok untuk hal-hal yang menonjolkan diri.",
+    Watugunung: "Wuku terakhir/penutup pawukon (Hari Raya Saraswati); cinta ilmu pengetahuan, namun perlu waspada karena melambangkan akhir dan awal siklus — banyak pantangan tradisional di wuku ini.",
+  };
+
+  var SIFAT = {
+    Luang: "Bersifat tunggal dan padat/kosong; hari yang netral, umumnya dipakai sebagai penyeimbang dalam menyusun dewasa, bukan penentu utama.",
+    Menga: "Sifatnya terbuka (menga); baik untuk kegiatan yang butuh keterbukaan dan komunikasi, kurang cocok untuk merahasiakan sesuatu.",
+    Pepet: "Sifatnya tertutup (pepet); cocok untuk kegiatan yang butuh kerahasiaan/introspeksi, kurang cocok untuk membuka usaha besar-besaran.",
+    Pasah: "Berarti 'berpisah/retak'; kurang baik untuk memulai hubungan/kerjasama baru, tapi baik untuk mengakhiri sesuatu atau bekerja sendiri.",
+    Beteng: "Berarti 'kukuh/teguh'; baik untuk memperkuat pondasi, benteng, atau komitmen yang sudah ada.",
+    Kajeng: "Condong ke unsur Bhuta; baik dipakai untuk upacara buta yadnya/pecaruan, kurang disarankan untuk kegiatan sakral tertentu tanpa penyeimbang.",
+    Sri: "Melambangkan kemakmuran; sangat baik untuk kegiatan yang berkaitan dengan rezeki dan hasil bumi.",
+    Laba: "Melambangkan keuntungan/imbalan; baik untuk berdagang dan transaksi.",
+    Jaya: "Melambangkan kemenangan/keunggulan; baik untuk kegiatan yang butuh semangat juang dan persaingan.",
+    Menala: "Melambangkan wilayah/kestabilan; baik untuk kegiatan yang berkaitan dengan tanah, bangunan, dan wilayah.",
+    Umanis: "Sifatnya penggerak/manis; ramah, disenangi, baik untuk memulai hubungan dan kegiatan sosial.",
+    Paing: "Sifatnya pencipta; kreatif, berapi-api, baik untuk memulai karya/usaha baru namun perlu kendali emosi.",
+    Pon: "Sifatnya penguasa; berwibawa dan tegas, baik untuk kegiatan yang butuh kepemimpinan.",
+    Wage: "Sifatnya pemelihara; tekun, hemat, baik untuk merawat dan memelihara apa yang sudah dimiliki.",
+    Kliwon: "Sifatnya pemusnah/pelebur; kuat secara spiritual, baik untuk upacara penyucian namun perlu kehati-hatian dalam hal duniawi.",
+    Tungleh: "Hari penuh godaan ketidakjujuran dan ingkar janji — waspada kebohongan dan fitnah, hindari memaksa orang jujur, cukup buat ia menyesali akibatnya.",
+    Aryang: "Harinya orang mudah lupa — buat catatan, jangan terlalu mengandalkan ingatan saat menyampaikan pesan penting.",
+    Urukung: "Hari kecerobohan/kealpaan — banyak kesalahan tak disengaja, kurangi tindakan berani dan hati-hati di jalan.",
+    Paniron: "Hari fatamorgana/kepura-puraan — sesuatu bisa tampak berbeda dari kenyataannya, teliti sebelum bertindak.",
+    Was: "Hari gembira — bukan sifat buruk, tapi tetap waspada agar tak lupa bersyukur; baik untuk membahagiakan orang lain.",
+    Maulu: "Hari pitam/mudah marah — tahan diri dari tindakan menyinggung, pilih kata yang menyejukkan.",
+    Redite: "Cerah, ramah, berjiwa pemimpin, disukai banyak orang; kurang sabar bila terburu-buru.",
+    Soma: "Tenang, teliti, penyayang keluarga; kadang ragu-ragu dalam mengambil keputusan.",
+    Anggara: "Berani, tegas, semangat juang tinggi; perlu kendali emosi agar tak mudah tersulut.",
+    Buda: "Cerdas, komunikatif, pandai bernegosiasi; cocok untuk kegiatan yang butuh diplomasi.",
+    Wrespati: "Bijaksana, suka menuntun/mengajar, dihormati; cocok untuk kegiatan pendidikan dan spiritual.",
+    Sukra: "Ramah, artistik, disukai lawan jenis; perlu waspada sifat boros.",
+    Saniscara: "Kuat, tahan banting, pekerja keras; kadang keras kepala dan sulit berkompromi.",
+    "Sri (Astawara)": "Kemakmuran; baik untuk kegiatan pertanian dan usaha yang berorientasi hasil.",
+    Indra: "Keindahan/kejayaan; baik untuk kegiatan seni dan hal yang menonjolkan keindahan.",
+    Guru: "Tuntunan; baik untuk belajar-mengajar, berguru, dan menimba ilmu.",
+    Yama: "Keadilan; baik untuk musyawarah, pengambilan keputusan, dan penegakan aturan.",
+    Ludra: "Peleburan; baik untuk upacara pembersihan/penyucian, kurang baik untuk memulai usaha baru.",
+    Brahma: "Penciptaan; baik untuk memulai karya baru dan kegiatan kreatif.",
+    Kala: "Nilai/waktu yang keras; perlu kehati-hatian, kurang disarankan untuk kegiatan besar tanpa penyeimbang dewasa lain.",
+    Uma: "Pemeliharaan; baik untuk merawat keluarga, kesehatan, dan lingkungan.",
+    Dangu: "Antara terang dan gelap — masa peralihan, sebaiknya menahan diri dari keputusan besar.",
+    Jangur: "Antara jadi dan batal — rencana masih mengambang, perlu kepastian tambahan sebelum bertindak.",
+    Gigis: "Sederhana — baik untuk kegiatan yang bersifat hemat dan tidak berlebihan.",
+    Nohan: "Gembira — suasana hati baik, cocok untuk pertemuan dan silaturahmi.",
+    Ogan: "Bingung — hindari mengambil keputusan penting, rawan salah perhitungan.",
+    Erangan: "Dendam — waspada konflik lama yang bisa muncul kembali, redam emosi.",
+    Urungan: "Batal — rencana rawan gagal atau tertunda, sebaiknya menunda kegiatan besar.",
+    Tulus: "Langsung/lancar — baik untuk memulai dan menuntaskan pekerjaan.",
+    Dadi: "Jadi/terwujud — baik untuk mengesahkan, meresmikan, dan mewujudkan rencana.",
+    Pandita: "Bijaksana; baik untuk kegiatan spiritual, belajar, dan memberi nasihat.",
+    Pati: "Dinamis/berubah cepat; baik untuk kegiatan yang butuh gerak cepat, kurang baik untuk hal yang butuh kestabilan jangka panjang.",
+    Suka: "Periang; baik untuk perayaan, pertemuan, dan kegiatan yang menyenangkan.",
+    Duka: "Berjiwa seni namun mudah tersinggung; baik untuk kegiatan kesenian, perlu kepekaan dalam interaksi sosial.",
+    "Sri (Dasawara)": "Kewanitaan/kemakmuran; baik untuk kegiatan yang berkaitan dengan keluarga dan rezeki.",
+    Manuh: "Taat dan menurut; baik untuk kegiatan yang butuh kepatuhan pada aturan/tradisi.",
+    Manusa: "Sosial; baik untuk kegiatan kemasyarakatan dan gotong royong.",
+    Raja: "Berjiwa kepemimpinan; baik untuk pelantikan dan kegiatan yang menegaskan kewenangan.",
+    Dewa: "Berbudi luhur; baik untuk upacara keagamaan dan kegiatan yang bernilai spiritual tinggi.",
+    Raksasa: "Berwatak keras; perlu kehati-hatian ekstra, kurang disarankan untuk kegiatan yang butuh kelembutan/negosiasi.",
+  };
+
+  function getSifat(name, category) {
+    if (category === "astawara" && name === "Sri") return SIFAT["Sri (Astawara)"];
+    if (category === "dasawara" && name === "Sri") return SIFAT["Sri (Dasawara)"];
+    return SIFAT[name] || "";
+  }
+
+  var DEWASA_RULES = [
+    { nama: "Dewasa Mentas", kategori: "usaha", tipe: "baik", ket: "Baik untuk memulai segala kegiatan usaha.",
+      test: function (w, s) { return w.saptawara.name === "Wrespati" && s.phase === "Pangelong" && (s.day === 7 || s.day === 15); } },
+    { nama: "Budha Wanas", kategori: "usaha", tipe: "baik", ket: "Baik untuk memulai usaha, hasil kegiatan cenderung baik.",
+      test: function (w, s) { return w.saptawara.name === "Buda" && w.pancawara.name === "Wage" && s.isPurnama; } },
+    { nama: "Purwa Suka", kategori: "spiritual", tipe: "baik", ket: "Baik untuk tapa/semadi/berpuasa.",
+      test: function (w, s) { return w.pancawara.name === "Kliwon" && s.isPurnama; } },
+    { nama: "Ala Dahat", kategori: "umum", tipe: "buruk", ket: "Hari yang teramat buruk untuk memulai kegiatan apa pun.",
+      test: function (w, s) { return w.saptawara.name === "Saniscara" && (s.isPurnama || s.isTilem); } },
+    { nama: "Lebur Awu", kategori: "membangun", tipe: "buruk", ket: "Hindari memakuh/meresmikan menempati rumah baru pada perpaduan Saptawara-Astawara ini.",
+      test: function (w) {
+        var pair = { Redite: "Indra", Soma: "Uma", Anggara: "Ludra", Buda: "Brahma", Wrespati: "Guru", Sukra: "Sri", Saniscara: "Yama" };
+        return pair[w.saptawara.name] === w.astawara.name;
+      } },
+    { nama: "Dewa Setata", kategori: "umum", tipe: "baik", ket: "Dewasa ayu untuk berbagai kegiatan penting.",
+      test: function (w, s) { if (s.phase !== "Penanggal") return false; var m = { Redite: 10, Soma: 9, Anggara: 6, Wrespati: 1 }; return m[w.saptawara.name] === s.day; } },
+    { nama: "Subacara", kategori: "umum", tipe: "baik", ket: "Dewasa ayu untuk berbagai kegiatan penting.",
+      test: function (w, s) {
+        var d = s.phase === "Purnama" ? 15 : (s.phase === "Penanggal" ? s.day : null);
+        if (d === null) return false;
+        var m = { Redite: [3, 15], Soma: [3], Anggara: [2, 7, 8], Buda: [2, 3], Wrespati: [5], Sukra: [1, 2, 3], Saniscara: [4, 5] };
+        return (m[w.saptawara.name] || []).indexOf(d) !== -1;
+      } },
+    { nama: "Ayu Nulus", kategori: "umum", tipe: "baik", ket: "Dewasa ayu, kegiatan cenderung berjalan lancar/tuntas.",
+      test: function (w, s) {
+        if (s.phase !== "Penanggal") return false;
+        var m = { Redite: [6], Soma: [3], Anggara: [7], Buda: [12, 13], Wrespati: [5], Sukra: [5] };
+        return (m[w.saptawara.name] || []).indexOf(s.day) !== -1;
+      } },
+    { nama: "Sedana Yoga", kategori: "usaha", tipe: "baik", ket: "Baik memulai bisnis/usaha yang mendatangkan rezeki.",
+      test: function (w, s) {
+        var d = s.isPurnama || s.isTilem ? 15 : s.day;
+        var m = { Redite: [8, 15], Soma: [3], Anggara: [7], Buda: [2, 3], Wrespati: [4, 5, 15], Sukra: [1, 6], Saniscara: [5, 15] };
+        return (m[w.saptawara.name] || []).indexOf(d) !== -1;
+      } },
+    { nama: "Dewasa Ngelayang (tanam & jukung)", kategori: "pertanian", tipe: "baik", ket: "Baik untuk mulai bercocok tanam dan membuat perahu/jukung.",
+      test: function (w, s) {
+        if (s.phase !== "Penanggal") return false;
+        var m = { Redite: [1, 8], Anggara: [7], Buda: [2, 13], Wrespati: [4], Sukra: [6], Saniscara: [5] };
+        return (m[w.saptawara.name] || []).indexOf(s.day) !== -1;
+      } },
+    { nama: "Upadana Mertha", kategori: "usaha", tipe: "baik", ket: "Baik untuk memulai bisnis, usaha pendatang rezeki.",
+      test: function (w, s) { return w.saptawara.name === "Redite" && s.phase === "Penanggal" && [1, 3, 6, 10].indexOf(s.day) !== -1; } },
+    { nama: "Mertha Buana", kategori: "upacara", tipe: "baik", ket: "Baik untuk upacara yadnya / widhi widhana.",
+      test: function (w, s) { return ["Redite", "Soma", "Anggara"].indexOf(w.saptawara.name) !== -1 && s.isPurnama; } },
+    { nama: "Ratu Ngemban Putra", kategori: "umum", tipe: "baik", ket: "Baik untuk upacara mengangkat anak.",
+      test: function (w, s) { return w.saptawara.name === "Sukra" && s.phase === "Penanggal" && s.day === 5; } },
+    { nama: "Sarik Agung", kategori: "usaha", tipe: "buruk", ket: "Hindari memulai usaha; berpotensi berakibat buruk.",
+      test: function (w) { return w.saptawara.name === "Buda" && ["Bala", "Kulantir", "Dungulan", "Merakih"].indexOf(w.wuku.name) !== -1; } },
+    { nama: "Prabu Pendah", kategori: "umum", tipe: "buruk", ket: "Hindari pelantikan/penobatan.",
+      test: function (w, s) { return w.saptawara.name === "Sukra" && s.phase === "Penanggal" && s.day === 4; } },
+    { nama: "Prengewa", kategori: "umum", tipe: "buruk", ket: "Hindari memulai usaha/kegiatan; rawan pertengkaran & permusuhan.",
+      test: function (w, s) { return w.saptawara.name === "Anggara" && s.phase === "Penanggal" && s.day === 1; } },
+    { nama: "Pati Paten", kategori: "umum", tipe: "buruk", ket: "Hari buruk untuk kegiatan/usaha apa pun.",
+      test: function (w, s) { return w.saptawara.name === "Sukra" && (s.isTilem || s.day === 10); } },
+    { nama: "Semut Sadulur", kategori: "umum", tipe: "campur", ket: "Pantangan untuk atiwa-tiwa (penguburan jenazah), namun sangat baik untuk membentuk organisasi/perkumpulan.",
+      test: function (w) { return w.uripTotal === 13; } },
+    { nama: "Kala Gotongan", kategori: "umum", tipe: "campur", ket: "Pantangan untuk atiwa-tiwa (penguburan jenazah), namun baik untuk memulai usaha.",
+      test: function (w) { return w.uripTotal === 14; } },
+    { nama: "Kala Jengking", kategori: "umum", tipe: "buruk", ket: "Hindari acara penting (pernikahan/rapat besar); namun baik untuk membuat keris/senjata tajam dan berlatih.",
+      test: function (w) { return w.sadwara.name === "Urukung" && w.astawara.name === "Kala"; } },
+  ];
+
+  function pairMatch(list, a, b) {
+    for (var i = 0; i < list.length; i++) if (list[i][0] === a && list[i][1] === b) return true;
+    return false;
+  }
+
+  var BANYU_URUG = [["Redite","Sinta"],["Soma","Sinta"],["Soma","Landep"],["Soma","Wariga"],["Soma","Sungsang"],["Soma","Krulut"],["Soma","Merakih"],["Soma","Medangkungan"],["Soma","Uye"],["Anggara","Sinta"],["Anggara","Tolu"],["Anggara","Medangsia"],["Anggara","Pahang"],["Anggara","Merakih"],["Anggara","Matal"],["Anggara","Menail"],["Buda","Tolu"],["Buda","Sungsang"],["Buda","Tambir"],["Buda","Matal"],["Buda","Kelawu"],["Wrespati","Tolu"],["Wrespati","Gumbreg"],["Wrespati","Pujut"],["Wrespati","Tambir"],["Wrespati","Medangkungan"],["Wrespati","Uye"],["Wrespati","Prangbakat"],["Sukra","Gumbreg"],["Sukra","Dungulan"],["Sukra","Pujut"],["Sukra","Krulut"],["Sukra","Kelawu"],["Sukra","Dukut"],["Saniscara","Kulantir"],["Saniscara","Wariga"],["Saniscara","Tambir"]];
+  var KALA_CAPLOKAN = [["Soma","Julungwangi"],["Soma","Merakih"],["Anggara","Tambir"],["Buda","Prangbakat"],["Sukra","Kuningan"],["Saniscara","Sinta"],["Saniscara","Julungwangi"],["Saniscara","Pujut"]];
+  var KALA_DANGU = [["Redite","Tolu"],["Redite","Langkir"],["Redite","Uye"],["Redite","Wayang"],["Soma","Merakih"],["Anggara","Ukir"],["Anggara","Gumbreg"],["Anggara","Dungulan"],["Anggara","Krulut"],["Buda","Sinta"],["Buda","Julungwangi"],["Buda","Tambir"],["Buda","Kelawu"],["Wrespati","Wariga"],["Wrespati","Pujut"],["Wrespati","Prangbakat"],["Sukra","Dungulan"],["Sukra","Matal"],["Sukra","Menail"],["Sukra","Ugu"],["Saniscara","Warigadean"],["Saniscara","Sungsang"],["Saniscara","Dungulan"],["Saniscara","Medangsia"],["Saniscara","Pahang"],["Saniscara","Medangkungan"],["Saniscara","Bala"],["Saniscara","Dukut"],["Saniscara","Watugunung"]];
+  var PEPEDAN = [["Redite","Tolu"],["Redite","Julungwangi"],["Redite","Sungsang"],["Redite","Dungulan"],["Redite","Pujut"],["Redite","Medangkungan"],["Redite","Matal"],["Redite","Menail"],["Redite","Bala"],["Redite","Ugu"],["Redite","Wayang"],["Redite","Kelawu"],["Redite","Watugunung"],["Redite","Uye"],["Soma","Warigadean"],["Soma","Medangsia"],["Soma","Krulut"],["Soma","Merakih"],["Soma","Matal"],["Soma","Uye"],["Soma","Prangbakat"],["Soma","Bala"],["Soma","Ugu"],["Soma","Wayang"],["Soma","Dukut"],["Anggara","Sinta"],["Anggara","Ukir"],["Anggara","Tolu"],["Anggara","Wariga"],["Anggara","Sungsang"],["Anggara","Dungulan"],["Anggara","Langkir"],["Anggara","Medangsia"],["Anggara","Krulut"],["Anggara","Merakih"],["Anggara","Tambir"],["Anggara","Medangkungan"],["Anggara","Uye"],["Anggara","Menail"],["Anggara","Prangbakat"],["Anggara","Bala"],["Anggara","Ugu"],["Anggara","Wayang"],["Anggara","Dukut"],["Anggara","Watugunung"],["Buda","Kulantir"],["Buda","Tolu"],["Buda","Gumbreg"],["Buda","Wariga"],["Buda","Warigadean"],["Buda","Julungwangi"],["Buda","Dungulan"],["Buda","Kuningan"],["Buda","Pujut"],["Buda","Pahang"],["Buda","Merakih"],["Buda","Menail"],["Buda","Prangbakat"],["Buda","Wayang"],["Buda","Kelawu"],["Buda","Watugunung"],["Wrespati","Sinta"],["Wrespati","Ukir"],["Wrespati","Kulantir"],["Wrespati","Wariga"],["Wrespati","Warigadean"],["Wrespati","Julungwangi"],["Wrespati","Dungulan"],["Wrespati","Medangsia"],["Wrespati","Tambir"],["Wrespati","Matal"],["Wrespati","Menail"],["Wrespati","Prangbakat"],["Wrespati","Dukut"],["Sukra","Landep"],["Sukra","Kulantir"],["Sukra","Medangsia"],["Sukra","Pahang"],["Sukra","Tambir"],["Sukra","Medangkungan"],["Sukra","Matal"],["Sukra","Menail"],["Sukra","Prangbakat"],["Sukra","Bala"],["Sukra","Wayang"],["Sukra","Dukut"],["Saniscara","Landep"],["Saniscara","Ukir"],["Saniscara","Wariga"],["Saniscara","Julungwangi"],["Saniscara","Sungsang"],["Saniscara","Dungulan"],["Saniscara","Langkir"],["Saniscara","Menail"],["Saniscara","Prangbakat"],["Saniscara","Bala"],["Saniscara","Wayang"],["Saniscara","Dukut"],["Saniscara","Watugunung"]];
+  var DAUH_AYU_DAY = { Redite: [4,5,6], Soma: [2,3,5], Anggara: [5,7,8], Buda: [4], Wrespati: [1,4], Sukra: [1,5,6], Saniscara: [5] };
+  var KALA_BANGKUNG_PAIR = [["Redite","Pon"],["Soma","Paing"],["Buda","Umanis"],["Saniscara","Wage"]];
+
+  DEWASA_RULES.push(
+    { nama: "Banyu Urug", kategori: "membangun", tipe: "campur", ket: "Baik untuk membuat bendungan. Tidak baik untuk membuat sumur.",
+      test: function (w) { return pairMatch(BANYU_URUG, w.saptawara.name, w.wuku.name); } },
+    { nama: "Dauh Ayu", kategori: "membangun", tipe: "baik", ket: "Baik untuk membuat awig-awig/peraturan, dan baik untuk membangun.",
+      test: function (w, s) { if (s.phase !== "Penanggal" && s.phase !== "Pangelong") return false; var arr = DAUH_AYU_DAY[w.saptawara.name] || []; return arr.indexOf(s.day) !== -1; } },
+    { nama: "Kala Bangkung, Kala Nanggung", kategori: "peternakan", tipe: "buruk", ket: "Tidak baik untuk mulai memelihara ternak.",
+      test: function (w) { return pairMatch(KALA_BANGKUNG_PAIR, w.saptawara.name, w.pancawara.name); } },
+    { nama: "Kala Beser", kategori: "campur", tipe: "campur", ket: "Baik untuk menyadap tirta, mengasah taji/tombak. Tidak baik membuat bendungan atau membicarakan rahasia.",
+      test: function (w) { return w.sadwara.name === "Tungleh" && w.astawara.name === "Kala"; } },
+    { nama: "Kala Caplokan", kategori: "peternakan", tipe: "baik", ket: "Baik untuk membuat alat penangkap ikan (pancing, jala, jaring, bubu).",
+      test: function (w) { return pairMatch(KALA_CAPLOKAN, w.saptawara.name, w.wuku.name); } },
+    { nama: "Kala Cepitan", kategori: "peralatan", tipe: "baik", ket: "Baik untuk membuat pancing, jebak/perangkap, dan alat penjepit.",
+      test: function (w) { return w.saptawara.name === "Soma" && w.pancawara.name === "Paing" && w.wuku.name === "Merakih"; } },
+    { nama: "Kala Dangu", kategori: "umum", tipe: "buruk", ket: "Tidak baik untuk memulai pekerjaan, pindah tempat, atau bepergian.",
+      test: function (w) { return pairMatch(KALA_DANGU, w.saptawara.name, w.wuku.name); } },
+    { nama: "Kala Ngamut", kategori: "peternakan", tipe: "baik", ket: "Baik untuk membuat pancing dan alat penangkap ikan lainnya.",
+      test: function (w) { return w.saptawara.name === "Soma" && w.wuku.name === "Merakih"; } },
+    { nama: "Pepedan", kategori: "pertanian", tipe: "campur", ket: "Baik untuk membuka lahan pertanian baru. Tidak baik untuk membuat peralatan dari besi.",
+      test: function (w) { return pairMatch(PEPEDAN, w.saptawara.name, w.wuku.name); } }
+  );
+
+  function evaluateDewasa(date) {
+    var w = computeWewaran(date);
+    var s = computeSasih(date);
+    var hits = [];
+    DEWASA_RULES.forEach(function (r) {
+      try { if (r.test(w, s)) hits.push({ nama: r.nama, kategori: r.kategori, tipe: r.tipe, ket: r.ket }); } catch (e) {}
+    });
+    return { wewaran: w, sasih: s, dewasa: hits };
+  }
+
+  var WUKU_TANPA_GURU = ["Kuningan", "Medangkungan", "Kelawu", "Gumbreg"];
+  var WUKU_RANGDA_TIGA = ["Wariga", "Warigadean", "Pujut", "Pahang", "Menail", "Prangbakat"];
+
+  function wukuCatatan(wukuName) {
+    var out = [];
+    if (WUKU_TANPA_GURU.indexOf(wukuName) !== -1) out.push("Wuku ini tidak memiliki unsur Guru (Astawara) — kurang disarankan untuk mulai belajar/berguru.");
+    if (WUKU_RANGDA_TIGA.indexOf(wukuName) !== -1) out.push("Wuku ini tergolong 'Rangda Tiga' — secara tradisi dihindari untuk melangsungkan upacara pernikahan.");
+    if (wukuName === "Dungulan") out.push("Wuku Dungulan memiliki 'Jaya Tiga / Kala Tiga' (Redite-Soma-Anggara Dungulan) — masa yang dianggap unggul namun juga keras, gunakan dengan penyeimbang dewasa lain.");
+    return out;
+  }
+
+  function jodohCompute(date1, date2) {
+    var w1 = computeWewaran(date1), w2 = computeWewaran(date2);
+    var totalUrip = w1.uripTotal + w2.uripTotal;
+    var gabungan = PANCASUDA[sisa(totalUrip, 7) - 1];
+    var sameWuku = w1.wuku.name === w2.wuku.name;
+    var samePancawara = w1.pancawara.name === w2.pancawara.name;
+    var sameSaptawara = w1.saptawara.name === w2.saptawara.name;
+
+    var baseScore = { "Wasesa Segara": 82, "Tunggak Semi": 78, "Satriya Wibawa": 92, "Sumur Sinaba": 85, "Satriya Wirang": 45, "Bumi Kapetak": 60, "Lebu Katiup Angin": 40 };
+    var score = baseScore[gabungan.name] || 60;
+    if (sameWuku) score += 3;
+    if (samePancawara) score -= 2;
+    score = Math.max(5, Math.min(98, score));
+
+    return { person1: w1, person2: w2, totalUrip: totalUrip, pancasuda: gabungan, sameWuku: sameWuku, samePancawara: samePancawara, sameSaptawara: sameSaptawara, score: score };
+  }
+
+  var Bali = {
+    toJDN: toJDN, dateToJDN: dateToJDN, mkUTC: mkUTC, sisa: sisa, WUKU: WUKU,
+    computeWewaran: computeWewaran, computeSasih: computeSasih, evaluateDewasa: evaluateDewasa,
+    jodohCompute: jodohCompute, getSifat: getSifat, wukuCatatan: wukuCatatan, WUKU_WATAK: WUKU_WATAK,
+    tables: { EKAWARA: EKAWARA, DWIWARA: DWIWARA, TRIWARA: TRIWARA, CATURWARA: CATURWARA, PANCAWARA: PANCAWARA,
+      SADWARA: SADWARA, SAPTAWARA: SAPTAWARA, ASTAWARA: ASTAWARA, SANGAWARA: SANGAWARA, DASAWARA: DASAWARA, PANCASUDA: PANCASUDA },
+  };
+
+  if (typeof module !== "undefined" && module.exports) module.exports = Bali;
+  else global.Bali = Bali;
+})(typeof window !== "undefined" ? window : globalThis);
+</script>
+
+<script>
 // ============================================================
-// BALINESE DATE — bind library
+// BALINESE DATE — bind library (dipakai khusus halaman Kalender)
 // ============================================================
 const BD = window.BalineseDate;
 const { BalineseDate, BalineseDateUtil, SasihDayInfo, Rahinan } = BD;
+// Bali engine internal (Pewarigaan / Padewasan / Jodoh) — lihat <script> di atas
+const Bali = window.Bali;
 
 const MONTH_NAMES = ["Januari","Februari","Maret","April","Mei","Juni","Juli","Agustus","September","Oktober","November","Desember"];
 const MONTH_SHORT = ["Jan","Feb","Mar","Apr","Mei","Jun","Jul","Agu","Sep","Okt","Nov","Des"];
@@ -532,6 +1096,23 @@ function showDateDetail(y, m, d) {
   });
   if (!badges) badges = '<span class="text-zinc-500 text-xs">Hari biasa, tidak ada rahinan/hari raya khusus</span>';
 
+  // ---- Detail 10 wewaran + dewasa (mesin internal Bali) ----
+  const dateUTC = Bali.mkUTC(y, m + 1, d);
+  const w = Bali.computeWewaran(dateUTC);
+  const s = Bali.computeSasih(dateUTC);
+  const ev = Bali.evaluateDewasa(dateUTC);
+
+  const wewLabels = { ekawara:'Ekawara', dwiwara:'Dwiwara', triwara:'Triwara', caturwara:'Caturwara', pancawara:'Pancawara', sadwara:'Sadwara', saptawara:'Saptawara', astawara:'Astawara', sangawara:'Sangawara', dasawara:'Dasawara' };
+  let wewGrid = Object.keys(wewLabels).map(k => {
+    const v = w[k];
+    const nm = v && v.name ? v.name : '—';
+    return `<div class="bg-zinc-900/60 border border-zinc-800 rounded-lg px-2 py-1.5 text-left"><span class="text-[9px] text-zinc-500 block uppercase tracking-wide">${wewLabels[k]}</span><span class="text-[11px] text-white font-bold">${nm}</span></div>`;
+  }).join('');
+
+  let dewasaHtml = ev.dewasa.length
+    ? ev.dewasa.map(x => `<div class="text-[11px] text-left mt-1.5"><span class="font-bold ${x.tipe==='baik'?'text-emerald-400':x.tipe==='buruk'?'text-red-400':'text-jinara-gold'}">${x.nama}</span> <span class="text-zinc-500">— ${x.ket}</span></div>`).join('')
+    : '<p class="text-[11px] text-zinc-500 text-left mt-1">Tidak ada dewasa bernama khusus terdeteksi hari ini.</p>';
+
   document.getElementById('detailContent').innerHTML = `
     <div class="text-2xl font-black text-white mb-1">${d} ${MONTH_NAMES[m]} ${y}</div>
     <div class="text-jinara-gold text-sm font-bold tracking-wider mb-4">${bd.saptaWara.name} ${bd.pancaWara.name} · Wuku ${bd.wuku.name}</div>
@@ -541,121 +1122,170 @@ function showDateDetail(y, m, d) {
       <div><span class="text-zinc-500">Triwara</span><br><span class="text-white font-semibold">${bd.triWara.name}</span></div>
       <div><span class="text-zinc-500">Sadwara</span><br><span class="text-white font-semibold">${bd.sadWara.name}</span></div>
     </div>
-    <div class="flex flex-wrap justify-center">${badges}</div>
+    <div class="flex flex-wrap justify-center mb-5">${badges}</div>
+
+    <div class="border-t border-zinc-800 pt-4 text-left">
+      <div class="text-[10px] text-zinc-500 uppercase tracking-wider mb-2">10 Wewaran (mesin Pewarigaan)</div>
+      <div class="grid grid-cols-2 gap-1.5 mb-3">${wewGrid}</div>
+      <div class="text-[10px] text-zinc-500 uppercase tracking-wider mb-1">Pancasuda</div>
+      <div class="text-xs text-white font-semibold mb-3">${w.pancasuda.name} — <span class="text-zinc-400 font-normal">${w.pancasuda.watak}</span></div>
+      <div class="text-[10px] text-zinc-500 uppercase tracking-wider mb-1">Ala-Ayuning Dewasa</div>
+      ${dewasaHtml}
+    </div>
   `;
   openModal('dateDetailModal');
 }
 
 // ============================================================
-// PEWARIGAAN — karakter kelahiran
+// PEWARIGAAN — profil lengkap 10 wewaran + sifat + pantangan
 // ============================================================
 function hitungPewarigaan() {
   const tgl = parseInt(document.getElementById('pTgl').value);
   const bln = parseInt(document.getElementById('pBln').value);
   const thn = parseInt(document.getElementById('pThn').value);
 
-  const bd = new BalineseDate(new Date(thn, bln - 1, tgl));
-  const urip = bd.saptaWara.urip + bd.pancaWara.urip;
+  const dateUTC = Bali.mkUTC(thn, bln, tgl);
+  const w = Bali.computeWewaran(dateUTC);
+  const s = Bali.computeSasih(dateUTC);
+  const watak = Bali.WUKU_WATAK[w.wuku.name] || '';
+  const catatan = Bali.wukuCatatan(w.wuku.name);
+  const ev = Bali.evaluateDewasa(dateUTC);
+
+  const sasihLabel = s.phase === 'Tilem' ? ('Tilem ' + s.sasih) : s.phase === 'Purnama' ? ('Purnama ' + s.sasih) : (s.phase + ' ' + s.day + ' (sasih ' + s.sasih + ')');
+
+  const rows = [
+    ['Ekawara (1)', w.ekawara ? w.ekawara.name : '—', w.ekawara ? w.ekawara.urip : '—', w.ekawara ? Bali.getSifat(w.ekawara.name) : 'Tidak aktif hari ini (jumlah urip genap).'],
+    ['Dwiwara (2)', w.dwiwara.name, w.dwiwara.urip, Bali.getSifat(w.dwiwara.name)],
+    ['Triwara (3)', w.triwara.name, w.triwara.urip, Bali.getSifat(w.triwara.name)],
+    ['Caturwara (4)', w.caturwara.name, w.caturwara.urip, Bali.getSifat(w.caturwara.name)],
+    ['Pancawara (5)', w.pancawara.name, w.pancawara.urip, Bali.getSifat(w.pancawara.name)],
+    ['Sadwara (6)', w.sadwara.name, w.sadwara.urip, Bali.getSifat(w.sadwara.name)],
+    ['Saptawara (7)', w.saptawara.name, w.saptawara.urip, Bali.getSifat(w.saptawara.name)],
+    ['Astawara (8)', w.astawara.name, w.astawara.urip, Bali.getSifat(w.astawara.name, 'astawara')],
+    ['Sangawara (9)', w.sangawara.name, w.sangawara.urip, Bali.getSifat(w.sangawara.name)],
+    ['Dasawara (10)', w.dasawara.name, w.dasawara.urip, Bali.getSifat(w.dasawara.name, 'dasawara')],
+  ];
+
+  const rowsHtml = rows.map(r => `
+    <tr class="border-b border-zinc-800/60 align-top">
+      <td class="py-2 pr-2 text-zinc-500 whitespace-nowrap">${r[0]}</td>
+      <td class="py-2 pr-2 text-white font-bold whitespace-nowrap">${r[1]}</td>
+      <td class="py-2 pr-2 text-zinc-300">${r[2]}</td>
+      <td class="py-2 text-zinc-400">${r[3]}</td>
+    </tr>`).join('');
+
+  const dewasaHtml = ev.dewasa.length
+    ? ev.dewasa.map(x => `
+      <div class="p-3 rounded-lg border ${x.tipe==='baik' ? 'border-emerald-700 bg-emerald-900/20' : x.tipe==='buruk' ? 'border-red-800 bg-red-900/20' : 'border-jinara-gold/40 bg-jinara-gold/10'} mb-2">
+        <div class="text-sm font-bold text-white">${x.nama} <span class="text-[10px] uppercase font-black ml-1 ${x.tipe==='baik' ? 'text-emerald-400' : x.tipe==='buruk' ? 'text-red-400' : 'text-jinara-gold'}">${x.tipe}</span></div>
+        <div class="text-xs text-zinc-400 mt-1">${x.ket}</div>
+      </div>`).join('')
+    : '<p class="text-xs text-zinc-500">Tidak ada dewasa bernama khusus terdeteksi pada tanggal ini — gunakan Pancasuda &amp; wewaran umum di atas sebagai acuan.</p>';
+
+  const catatanHtml = catatan.length ? catatan.map(c => `<div class="text-xs text-jinara-gold/90 bg-jinara-gold/10 border border-jinara-gold/20 rounded-lg p-2.5 mb-2">${c}</div>`).join('') : '';
 
   document.getElementById('pewarigaanResult').innerHTML = `
-    <div class="glass-card rounded-xl p-5 border border-jinara-gold/20">
+    <div class="glass-card rounded-xl p-5 border border-jinara-gold/20 mb-4">
       <div class="text-center mb-4">
-        <div class="text-jinara-gold text-lg font-black">${bd.saptaWara.name} ${bd.pancaWara.name}</div>
-        <div class="text-zinc-400 text-xs">Wuku ${bd.wuku.name} · ${bd.sasih.name} · Saka ${bd.saka}</div>
+        <div class="text-jinara-gold text-lg font-black">${w.saptawara.name} ${w.pancawara.name}</div>
+        <div class="text-zinc-400 text-xs mt-1">Wuku ${w.wuku.name} (Dewata ${w.wuku.dewata}) · Sasih ${sasihLabel} · Saka ${s.caka}</div>
       </div>
+      <div class="overflow-x-auto">
+        <table class="w-full text-xs">
+          <thead>
+            <tr class="text-zinc-500 uppercase text-[10px] border-b border-zinc-800">
+              <th class="text-left py-2 pr-2">Wewaran</th><th class="text-left py-2 pr-2">Nama</th><th class="text-left py-2 pr-2">Urip</th><th class="text-left py-2">Sifat &amp; Makna</th>
+            </tr>
+          </thead>
+          <tbody>${rowsHtml}</tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="glass-card rounded-xl p-5 border border-zinc-800 mb-4">
+      <h3 class="text-sm font-extrabold text-white mb-2">Watak Wuku ${w.wuku.name}</h3>
+      <p class="text-xs text-zinc-400 leading-relaxed">${watak}</p>
+      ${catatanHtml}
+    </div>
+
+    <div class="glass-card rounded-xl p-5 border border-zinc-800 mb-4">
+      <h3 class="text-sm font-extrabold text-white mb-3">Pancasuda &amp; Watek</h3>
       <div class="grid grid-cols-2 gap-3 text-xs">
-        <div><span class="text-zinc-500">Urip / Neptu</span><br><span class="text-white font-semibold">${urip}</span></div>
-        <div><span class="text-zinc-500">Sadwara</span><br><span class="text-white font-semibold">${bd.sadWara.name}</span></div>
-        <div><span class="text-zinc-500">Pararasan</span><br><span class="text-white font-semibold">${bd.pararasan.name}</span></div>
-        <div><span class="text-zinc-500">Dasawara</span><br><span class="text-white font-semibold">${bd.dasaWara.name}</span></div>
+        <div><span class="text-zinc-500">Pancasuda</span><br><span class="text-white font-semibold">${w.pancasuda.name}</span></div>
+        <div><span class="text-zinc-500">Total Urip</span><br><span class="text-white font-semibold">${w.uripTotal} (Saptawara+Pancawara)</span></div>
+        <div><span class="text-zinc-500">Watek Madya</span><br><span class="text-white font-semibold">${w.watekMadya}</span></div>
+        <div><span class="text-zinc-500">Watek Alit</span><br><span class="text-white font-semibold">${w.watekAlit}</span></div>
+        <div><span class="text-zinc-500">Ingkel</span><br><span class="text-white font-semibold">${w.ingkel}</span> <span class="text-zinc-500">(pantangan berburu/menyembelih golongan hewan ini)</span></div>
       </div>
+      <p class="text-xs text-zinc-400 mt-3 leading-relaxed">${w.pancasuda.watak}</p>
+    </div>
+
+    <div class="glass-card rounded-xl p-5 border border-zinc-800">
+      <h3 class="text-sm font-extrabold text-white mb-3">Ala-Ayuning Dewasa Kelahiran (${ev.dewasa.length})</h3>
+      ${dewasaHtml}
     </div>
   `;
 }
 
 // ============================================================
-// PADEWASAN — pencarian hari baik
+// PADEWASAN — mesin dewasa ayu terformulasi
 // ============================================================
-const PAD_RULES = {
-  usaha: { label: 'usaha/bisnis', idealSapta: ['Redite', 'Anggara', 'Buda'], idealPanca: ['Paing', 'Pon', 'Wage'], avoidWuku: ['Wayang', 'Kuningan'] },
-  renovasi: { label: 'renovasi/bangun rumah', idealSapta: ['Buda', 'Wraspati'], idealPanca: ['Wage', 'Pon'], avoidWuku: [] },
-  upacara: { label: 'upacara/ritual', idealSapta: [], idealPanca: [], avoidWuku: [] },
-  pernikahan: { label: 'pernikahan', idealSapta: [], idealPanca: [], avoidWuku: [] }
-};
-
 function cariHariBaik() {
-  const aktivitas = document.getElementById('padAktivitas').value;
+  const kategori = document.getElementById('padKategori').value;
   const bulan = parseInt(document.getElementById('padBulan').value);
   const tahun = parseInt(document.getElementById('padTahun').value);
-  const rule = PAD_RULES[aktivitas];
   const daysInMonth = new Date(tahun, bulan + 1, 0).getDate();
-
-  const results = [];
-
-  for (let d = 1; d <= daysInMonth; d++) {
-    const bd = new BalineseDate(new Date(tahun, bulan, d));
-    const rahinan = BalineseDateUtil.getRahinan(bd);
-    const hol = HOLIDAYS[holidayKey(tahun, bulan, d)];
-    const isTilem = bd.sasihDayInfo === SasihDayInfo.TILEM;
-    const isPurnama = bd.sasihDayInfo === SasihDayInfo.PURNAMA;
-    const isKajeng = rahinan.includes(Rahinan.KAJENG_KLIWON);
-
-    let status = 'netral';
-    const alasan = [];
-
-    if (isTilem) {
-      status = 'hindari';
-      alasan.push('Tilem — bulan mati, umumnya dihindari untuk memulai hal baru');
-    } else if (isKajeng && (aktivitas === 'pernikahan' || aktivitas === 'usaha')) {
-      status = 'hatihati';
-      alasan.push('Kajeng Kliwon — energi spiritual tinggi, perlu kehati-hatian ekstra');
-    } else if (rule.avoidWuku.includes(bd.wuku.name)) {
-      status = 'hindari';
-      alasan.push(`Wuku ${bd.wuku.name} kurang ideal untuk ${rule.label}`);
-    } else if (rule.idealSapta.includes(bd.saptaWara.name) && rule.idealPanca.includes(bd.pancaWara.name)) {
-      status = 'baik';
-      alasan.push(`${bd.saptaWara.name} ${bd.pancaWara.name} — kombinasi ideal untuk ${rule.label}`);
-    } else if (rule.idealSapta.includes(bd.saptaWara.name) || rule.idealPanca.includes(bd.pancaWara.name)) {
-      status = 'cukup';
-      alasan.push(`${bd.saptaWara.name} ${bd.pancaWara.name} — cukup mendukung`);
-    }
-
-    if (isPurnama) {
-      alasan.push('Purnama — baik untuk persembahyangan/upacara');
-      if (status === 'netral') status = 'cukup';
-    }
-
-    if (hol) alasan.push(`Bertepatan ${hol.type === 'libur' ? 'libur nasional' : 'cuti bersama'}: ${hol.name}`);
-
-    if (status !== 'netral') results.push({ d, bd, status, alasan });
-  }
-
-  const STYLE = {
-    baik:     { label: 'BAIK',      cls: 'text-emerald-400 border-emerald-700 bg-emerald-900/20' },
-    cukup:    { label: 'CUKUP',     cls: 'text-jinara-gold border-jinara-gold/40 bg-jinara-gold/10' },
-    hatihati: { label: 'HATI-HATI', cls: 'text-purple-300 border-purple-700 bg-purple-900/20' },
-    hindari:  { label: 'HINDARI',   cls: 'text-red-400 border-red-800 bg-red-900/20' }
-  };
-
   const container = document.getElementById('padewasanResults');
 
-  if (results.length === 0) {
-    container.innerHTML = '<p class="text-xs text-zinc-500 text-center py-4">Tidak ada hari yang menonjol bulan ini — semua tergolong netral.</p>';
-    return;
+  let html = '';
+  let any = false;
+
+  for (let d = 1; d <= daysInMonth; d++) {
+    const dateUTC = Bali.mkUTC(tahun, bulan + 1, d);
+    const ev = Bali.evaluateDewasa(dateUTC);
+    const list = kategori ? ev.dewasa.filter(x => x.kategori === kategori) : ev.dewasa;
+    if (!list.length) continue;
+    any = true;
+    html += `
+      <div class="p-3 rounded-xl border border-zinc-800 bg-zinc-900/40 mb-2.5">
+        <div class="text-sm font-bold text-white mb-1.5">${d} ${MONTH_SHORT[bulan]} ${tahun} · ${ev.wewaran.saptawara.name} ${ev.wewaran.pancawara.name}, Wuku ${ev.wewaran.wuku.name}</div>
+        ${list.map(x => `<div class="text-xs mb-1"><span class="font-bold ${x.tipe==='baik' ? 'text-emerald-400' : x.tipe==='buruk' ? 'text-red-400' : 'text-jinara-gold'}">${x.nama}</span> <span class="text-zinc-500">— ${x.ket}</span></div>`).join('')}
+      </div>`;
   }
 
-  container.innerHTML = results.map(r => {
-    const st = STYLE[r.status];
-    return `
-      <div class="flex items-start justify-between gap-3 p-3 rounded-xl border ${st.cls}">
-        <div>
-          <div class="text-sm font-bold text-white">${r.d} ${MONTH_SHORT[bulan]} ${tahun} · ${r.bd.saptaWara.name} ${r.bd.pancaWara.name}</div>
-          <div class="text-[11px] text-zinc-400 mt-0.5">${r.alasan.join(' · ')}</div>
+  if (!any) html = '<p class="text-xs text-zinc-500 text-center py-4">Tidak ditemukan dewasa untuk kategori ini pada bulan tersebut — coba kategori "Semua" atau bulan lain.</p>';
+  container.innerHTML = html;
+}
+
+// ============================================================
+// JODOH — Petung Pancasuda gabungan
+// ============================================================
+function hitungJodoh() {
+  const v1 = document.getElementById('jdDate1').value;
+  const v2 = document.getElementById('jdDate2').value;
+  if (!v1 || !v2) { alert('Isi kedua tanggal lahir terlebih dahulu.'); return; }
+  const p1 = v1.split('-').map(Number), p2 = v2.split('-').map(Number);
+  const j = Bali.jodohCompute(Bali.mkUTC(p1[0], p1[1], p1[2]), Bali.mkUTC(p2[0], p2[1], p2[2]));
+
+  document.getElementById('jodohResult').innerHTML = `
+    <div class="glass-card rounded-xl p-5 border border-jinara-gold/20">
+      <div class="flex items-center gap-4 mb-4">
+        <div class="w-20 h-20 rounded-full border-4 border-jinara-gold flex items-center justify-center text-2xl font-black text-jinara-gold shrink-0">${j.score}</div>
+        <div class="text-left">
+          <div class="text-white font-black text-base">${j.pancasuda.name}</div>
+          <div class="text-zinc-400 text-xs mt-1">${j.pancasuda.watak}</div>
         </div>
-        <span class="text-[10px] font-black px-2 py-1 rounded-md border ${st.cls} whitespace-nowrap">${st.label}</span>
       </div>
-    `;
-  }).join('');
+      <div class="grid grid-cols-1 gap-2 text-xs text-left">
+        <div><span class="text-zinc-500">Anda</span> — <span class="text-white font-semibold">${j.person1.saptawara.name} ${j.person1.pancawara.name}, Wuku ${j.person1.wuku.name}</span> <span class="text-zinc-500">(urip ${j.person1.uripTotal})</span></div>
+        <div><span class="text-zinc-500">Pasangan</span> — <span class="text-white font-semibold">${j.person2.saptawara.name} ${j.person2.pancawara.name}, Wuku ${j.person2.wuku.name}</span> <span class="text-zinc-500">(urip ${j.person2.uripTotal})</span></div>
+        <div><span class="text-zinc-500">Total Urip Gabungan</span> — <span class="text-white font-semibold">${j.totalUrip} → Pancasuda: ${j.pancasuda.name}</span></div>
+        <div><span class="text-zinc-500">Wuku sama?</span> — <span class="text-white font-semibold">${j.sameWuku ? 'Ya' : 'Tidak'}</span></div>
+        <div><span class="text-zinc-500">Pancawara sama?</span> — <span class="text-white font-semibold">${j.samePancawara ? 'Ya' : 'Tidak'}</span></div>
+      </div>
+      <p class="text-[11px] text-zinc-500 mt-4 leading-relaxed border-t border-zinc-800 pt-3">Metode Pancasuda gabungan (jumlah urip Saptawara+Pancawara kedua pasangan, dibagi 7) adalah salah satu metode klasik wariga Bali untuk membaca patemon/jodoh. Hasil ini bersifat panduan budaya, bukan penentu mutlak — pasangan dengan hasil kurang ideal tetap disarankan mencari dewasa/hari pernikahan penyeimbang bersama pemangku, bukan membatalkan hubungan.</p>
+    </div>
+  `;
 }
 
 // ============================================================
